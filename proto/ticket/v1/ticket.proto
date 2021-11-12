@@ -1,48 +1,61 @@
 syntax = "proto3";
 
-package proto.ticket.v1;
+package ticket.v1;
 
 import "google/protobuf/timestamp.proto";
 
 option go_package = "proto/ticket/v1";
 
-enum OrderBy {
-  DESC = 0;
-  ASC = 1;
-}
-
-// Ticket
 message Ticket {
   string id = 1;
-  string owner_id = 2;
-  string name_short = 3;
-  string name_ext = 4;
-  string description = 5;
-  int32 amount = 6;
-  double price = 7;
-  int32 currency = 8;
-  bool active = 9;
-  string advantage = 10;
-  google.protobuf.Timestamp published_at = 11;
-  google.protobuf.Timestamp created_at = 12;
-  google.protobuf.Timestamp updated_at = 13;
-  google.protobuf.Timestamp deleted_at = 14;
+  google.protobuf.Timestamp published_at = 2;
+  google.protobuf.Timestamp created_at = 3;
+  google.protobuf.Timestamp updated_at = 4;
+  google.protobuf.Timestamp deleted_at = 5;
+  string owner_id = 6;
+  string name_short = 7;
+  string name_ext = 8;
+  int32 amount = 9;
+  double price = 10;
+  int32 currency = 11;
+  bool active = 12;
+  string advantage = 13;
+  string description = 14;
+}
+
+service TicketService {
+  rpc CreateTicket (CreateTicketRequest) returns (CreateTicketResponse);
+  rpc ListTicket (ListTicketsRequest) returns (ListTicketsResponse);
+  rpc UpdateTicket (UpdateTicketRequest) returns (ListTicketsResponse);
+  rpc DeleteTicket (DeleteTicketRequest) returns (DeleteTicketResponse);
 }
 
 message CreateTicketRequest {
-  Ticket ticket = 1;
+  string owner_id = 1;
+  string name_short = 2;
+  string name_ext = 3;
+  int32 amount = 4;
+  double price = 5;
+  int32 currency = 6;
+  bool active = 7;
+  string advantage = 8; // rename perk
+  string description = 9;
 }
 
 message CreateTicketResponse{
-  string id = 1;
+  string _id = 1;
 }
 
-message GetTicketRequest{
-  string id = 1;
+message ListTicketsRequest {
+  string _id = 1;
+  uint32 page_size = 2;
+  string page_token = 3;
+  bool reverse = 4;
 }
 
-message GetTicketResponse{
-  Ticket ticket = 1;
+message ListTicketsResponse {
+  repeated Ticket tags = 1;
+  string next_page_token = 2;
 }
 
 message UpdateTicketRequest{
@@ -50,15 +63,7 @@ message UpdateTicketRequest{
 }
 
 message DeleteTicketRequest{
-  string id = 1;
+  string _id = 1;
 }
 
 message DeleteTicketResponse{}
-
-// SERVICE
-service TicketService {
-  rpc CreateTicket (CreateTicketRequest) returns (CreateTicketResponse);
-  rpc GetTicket (GetTicketRequest) returns (GetTicketResponse);
-  rpc UpdateTicket (UpdateTicketRequest) returns (GetTicketResponse);
-  rpc DeleteTicket (DeleteTicketRequest) returns (DeleteTicketResponse);
-}

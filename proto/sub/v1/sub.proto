@@ -1,0 +1,43 @@
+syntax = "proto3";
+
+package sub.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "proto/sub/v1";
+//
+//message Tag {
+//  string id = 1;
+//  google.protobuf.Timestamp created_at = 2;
+//  google.protobuf.Timestamp updated_at = 3;
+//  google.protobuf.Timestamp deleted_at = 4;
+//  string name = 5;
+//  string description = 6;
+//}
+//
+//service TagService {
+//  rpc CreateTag(CreateTagRequest) returns (CreateTagResponse);
+//  rpc ListTags(ListTagsRequest) returns (ListTagsResponse);
+//}
+//
+//message CreateTagRequest {
+//  string id = 1;
+//  string name = 2;
+//  string commit_name = 3;
+//}
+//
+//message CreateTagResponse {
+//  Tag tag = 1;
+//}
+//
+//message ListTagsRequest {
+//  string id = 1;
+//  uint32 page_size = 2;
+//  string page_token = 3;
+//  bool reverse = 4;
+//}
+//
+//message ListTagsResponse {
+//  repeated Tag tags = 1;
+//  string next_page_token = 2;
+//}

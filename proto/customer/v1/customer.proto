@@ -1,0 +1,78 @@
+syntax = "proto3";
+
+package customer.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "proto/customer/v1";
+
+message Customer {
+  string id = 1;
+  string login = 2;
+  string password = 3;
+  string status = 4;
+  string identity = 5;
+  string type = 6;
+  google.protobuf.Timestamp createdAt = 7;
+  google.protobuf.Timestamp updatedAt = 8;
+  google.protobuf.Timestamp deletedAt = 9;
+}
+
+service CustomerService {
+  rpc CreateCustomer (CreateCustomerRequest) returns (CreateCustomerResponse);
+  rpc ListCustomers (ListCustomersRequest) returns (ListCustomersResponse);
+  rpc UpdateCustomer (UpdateCustomerRequest) returns (ListCustomersResponse);
+  rpc DeleteCustomer (DeleteCustomerRequest) returns (DeleteCustomerResponse);
+
+  rpc Login (LoginRequest) returns (LoginResponse);
+  rpc Logout (LogoutRequest) returns (LogoutResponse);
+}
+
+message CreateCustomerRequest {
+  string login = 1;
+  string identity = 2;
+  string password = 3;
+  string confirmPassword = 4;
+  string type = 5;
+
+}
+
+message CreateCustomerResponse {
+  string token = 1;
+}
+
+message ListCustomersRequest {
+  string customer_id = 1;
+}
+
+message UpdateCustomerRequest {
+  Customer customer = 1;
+}
+
+message ListCustomersResponse {
+  Customer customer = 1;
+}
+
+message DeleteCustomerRequest {
+  string customer_id = 1;
+}
+
+message DeleteCustomerResponse {}
+
+
+message LoginRequest {
+  string ident = 1;
+  string password = 2;
+}
+
+message LoginResponse {
+  string token = 1;
+}
+
+message LogoutRequest {
+  string token = 1;
+}
+
+message LogoutResponse {
+  string token = 1;
+}

@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+package photo.v1;
+
+import "google/protobuf/timestamp.proto";
+
+option go_package = "proto/photo/v1";
+
+message Photo{
+  string id = 1;
+  google.protobuf.Timestamp created_at = 2;
+  google.protobuf.Timestamp updated_at = 3;
+  google.protobuf.Timestamp deleted_at = 4;
+  string type = 5;
+  int32 size_kb = 6;
+  string upload_name = 7;
+  string description = 8;
+  string owner_id = 9;
+};
+
+service PhotoService {
+  rpc CreatePhoto(CreatePhotoRequest) returns (CreatePhotoResponse);
+  rpc ListPhotos(ListPhotosRequest) returns (ListPhotosResponse);
+}
+
+message CreatePhotoRequest{
+  string type = 1;
+  int32 size_kb = 2;
+  string upload_name = 3;
+  string description = 4;
+};
+
+message CreatePhotoResponse{
+  bool created = 1;
+  Photo photo = 2;
+}
+
+message ListPhotosRequest{
+  string id = 1;
+  uint32 page_size = 2;
+  string page_token = 3;
+  bool reverse = 4;
+};
+
+message ListPhotosResponse {
+  repeated Photo photos = 1;
+  string next_page_token = 2;
+}
