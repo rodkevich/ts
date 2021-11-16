@@ -277,5 +277,5 @@ var CustomerService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "customer/v1/customer.proto",
+	Metadata: "customer/proto/v1/customer.proto",
 }

@@ -8,33 +8,33 @@ import (
 	v1 "github.com/rodkevich/ts/proto/customer/v1"
 )
 
-type UserService struct {
+type CustomerService struct {
 	v1.UnimplementedCustomerServiceServer
 
 	customerUC customer.UsageSchema
 	logger     logger.Logger
 }
 
-func (u *UserService) CreateCustomer(ctx context.Context, request *v1.CreateCustomerRequest) (*v1.CreateCustomerResponse, error) {
+func (c *CustomerService) CreateCustomer(ctx context.Context, r *v1.CreateCustomerRequest) (*v1.CreateCustomerResponse, error) {
 	panic("implement me")
 }
 
-func (u *UserService) ListCustomers(ctx context.Context, request *v1.ListCustomersRequest) (*v1.ListCustomersResponse, error) {
+func (c *CustomerService) ListCustomers(ctx context.Context, r *v1.ListCustomersRequest) (*v1.ListCustomersResponse, error) {
 	panic("implement me")
 }
 
-func (u *UserService) UpdateCustomer(ctx context.Context, request *v1.UpdateCustomerRequest) (*v1.ListCustomersResponse, error) {
+func (c *CustomerService) UpdateCustomer(ctx context.Context, r *v1.UpdateCustomerRequest) (*v1.ListCustomersResponse, error) {
 	panic("implement me")
 }
 
-func (u *UserService) DeleteCustomer(ctx context.Context, request *v1.DeleteCustomerRequest) (*v1.DeleteCustomerResponse, error) {
+func (c *CustomerService) DeleteCustomer(ctx context.Context, r *v1.DeleteCustomerRequest) (*v1.DeleteCustomerResponse, error) {
 	panic("implement me")
 }
 
-func (u *UserService) Login(ctx context.Context, request *v1.LoginRequest) (*v1.LoginResponse, error) {
+func (c *CustomerService) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error) {
 	panic("implement me")
 }
 
-func (u *UserService) Logout(ctx context.Context, request *v1.LogoutRequest) (*v1.LogoutResponse, error) {
+func (c *CustomerService) Logout(ctx context.Context, r *v1.LogoutRequest) (*v1.LogoutResponse, error) {
 	panic("implement me")
 }

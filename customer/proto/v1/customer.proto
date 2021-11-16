@@ -4,15 +4,16 @@ package customer.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "proto/customer/v1";
+option go_package = "customer/proto/v1";
 
 message Customer {
   string id = 1;
-  string login = 2;
-  string password = 3;
-  string status = 4;
-  string identity = 5;
-  string type = 6;
+  string type = 2;
+  string status = 3;
+  string login = 4;
+  string password = 5;
+  string identity = 6;
+
   google.protobuf.Timestamp createdAt = 7;
   google.protobuf.Timestamp updatedAt = 8;
   google.protobuf.Timestamp deletedAt = 9;
@@ -29,16 +30,17 @@ service CustomerService {
 }
 
 message CreateCustomerRequest {
-  string login = 1;
-  string identity = 2;
-  string password = 3;
-  string confirmPassword = 4;
-  string type = 5;
+  Customer customer = 1;
+  string confirmPassword = 2;
+  //  map<string, string> optional = 6;
+}
 
+message AddressResponse {
+  string transactions_count = 2;
 }
 
 message CreateCustomerResponse {
-  string token = 1;
+  string customer_id = 1;
 }
 
 message ListCustomersRequest {
