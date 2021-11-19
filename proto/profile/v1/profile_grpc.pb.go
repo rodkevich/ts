@@ -16,7 +16,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 // ProfileServiceClient is the client API for ProfileService service.
 //
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+// For semantics around ctx usage and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ProfileServiceClient interface {
 	CreateProfile(ctx context.Context, in *CreateProfileRequest, opts ...grpc.CallOption) (*CreateProfileResponse, error)
 	ListProfile(ctx context.Context, in *ListProfileRequest, opts ...grpc.CallOption) (*ListProfileResponse, error)
@@ -181,7 +181,7 @@ func _ProfileService_DeleteProfile_Handler(srv interface{}, ctx context.Context,
 }
 
 // ProfileService_ServiceDesc is the grpc.ServiceDesc for ProfileService service.
-// It's only intended for direct use with grpc.RegisterService,
+// It's only intended for direct usage with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var ProfileService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "profile.v1.ProfileService",

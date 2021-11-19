@@ -1,6 +1,6 @@
 -- v0.1.0
 
-DROP TABLE if exists customers;
+-- DROP TABLE if exists customers;
 
 -- EXTENSIONS ------------------------------------------------------------------
 CREATE EXTENSION if not exists "pgcrypto";

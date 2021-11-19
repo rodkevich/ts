@@ -16,7 +16,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 // TagServiceClient is the client API for TagService service.
 //
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+// For semantics around ctx usage and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TagServiceClient interface {
 	CreateTag(ctx context.Context, in *CreateTagRequest, opts ...grpc.CallOption) (*CreateTagResponse, error)
 	ListTags(ctx context.Context, in *ListTagsRequest, opts ...grpc.CallOption) (*ListTagsResponse, error)
@@ -117,7 +117,7 @@ func _TagService_ListTags_Handler(srv interface{}, ctx context.Context, dec func
 }
 
 // TagService_ServiceDesc is the grpc.ServiceDesc for TagService service.
-// It's only intended for direct use with grpc.RegisterService,
+// It's only intended for direct usage with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TagService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "tag.v1.TagService",

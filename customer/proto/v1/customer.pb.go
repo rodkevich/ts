@@ -34,7 +34,7 @@ type Customer struct {
 	Identity  string               `protobuf:"bytes,6,opt,name=identity,proto3" json:"identity,omitempty"`
 	CreatedAt *timestamp.Timestamp `protobuf:"bytes,7,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
 	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,8,opt,name=updatedAt,proto3" json:"updatedAt,omitempty"`
-	DeletedAt *timestamp.Timestamp `protobuf:"bytes,9,opt,name=deletedAt,proto3" json:"deletedAt,omitempty"`
+	Deleted   bool                 `protobuf:"varint,9,opt,name=deleted,proto3" json:"deleted,omitempty"`
 }
 
 func (x *Customer) Reset() {
@@ -125,11 +125,11 @@ func (x *Customer) GetUpdatedAt() *timestamp.Timestamp {
 	return nil
 }
 
-func (x *Customer) GetDeletedAt() *timestamp.Timestamp {
+func (x *Customer) GetDeleted() bool {
 	if x != nil {
-		return x.DeletedAt
+		return x.Deleted
 	}
-	return nil
+	return false
 }
 
 type CreateCustomerRequest struct {
@@ -711,7 +711,7 @@ var file_customer_proto_v1_customer_proto_rawDesc = []byte{
 	0x74, 0x6f, 0x12, 0x0b, 0x63, 0x75, 0x73, 0x74, 0x6f, 0x6d, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x1a,
 	0x1f, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
 	0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x22, 0xc2, 0x02, 0x0a, 0x08, 0x43, 0x75, 0x73, 0x74, 0x6f, 0x6d, 0x65, 0x72, 0x12, 0x0e, 0x0a,
+	0x22, 0xa2, 0x02, 0x0a, 0x08, 0x43, 0x75, 0x73, 0x74, 0x6f, 0x6d, 0x65, 0x72, 0x12, 0x0e, 0x0a,
 	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x12, 0x0a,
 	0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70,
 	0x65, 0x12, 0x16, 0x0a, 0x06, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x18, 0x03, 0x20, 0x01, 0x28,
@@ -727,11 +727,9 @@ var file_customer_proto_v1_customer_proto_rawDesc = []byte{
 	0x74, 0x12, 0x38, 0x0a, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x08,
 	0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70,
-	0x52, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x38, 0x0a, 0x09, 0x64,
-	0x65, 0x6c, 0x65, 0x74, 0x65, 0x64, 0x41, 0x74, 0x18, 0x09, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a,
-	0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66,
-	0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x64, 0x65, 0x6c, 0x65,
-	0x74, 0x65, 0x64, 0x41, 0x74, 0x22, 0x74, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43,
+	0x52, 0x09, 0x75, 0x70, 0x64, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x18, 0x0a, 0x07, 0x64,
+	0x65, 0x6c, 0x65, 0x74, 0x65, 0x64, 0x18, 0x09, 0x20, 0x01, 0x28, 0x08, 0x52, 0x07, 0x64, 0x65,
+	0x6c, 0x65, 0x74, 0x65, 0x64, 0x22, 0x74, 0x0a, 0x15, 0x43, 0x72, 0x65, 0x61, 0x74, 0x65, 0x43,
 	0x75, 0x73, 0x74, 0x6f, 0x6d, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x31,
 	0x0a, 0x08, 0x63, 0x75, 0x73, 0x74, 0x6f, 0x6d, 0x65, 0x72, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b,
 	0x32, 0x15, 0x2e, 0x63, 0x75, 0x73, 0x74, 0x6f, 0x6d, 0x65, 0x72, 0x2e, 0x76, 0x31, 0x2e, 0x43,
@@ -845,27 +843,26 @@ var file_customer_proto_v1_customer_proto_goTypes = []interface{}{
 var file_customer_proto_v1_customer_proto_depIdxs = []int32{
 	13, // 0: customer.v1.Customer.createdAt:type_name -> google.protobuf.Timestamp
 	13, // 1: customer.v1.Customer.updatedAt:type_name -> google.protobuf.Timestamp
-	13, // 2: customer.v1.Customer.deletedAt:type_name -> google.protobuf.Timestamp
-	0,  // 3: customer.v1.CreateCustomerRequest.customer:type_name -> customer.v1.Customer
-	0,  // 4: customer.v1.UpdateCustomerRequest.customer:type_name -> customer.v1.Customer
-	0,  // 5: customer.v1.ListCustomersResponse.customer:type_name -> customer.v1.Customer
-	1,  // 6: customer.v1.CustomerService.CreateCustomer:input_type -> customer.v1.CreateCustomerRequest
-	4,  // 7: customer.v1.CustomerService.ListCustomers:input_type -> customer.v1.ListCustomersRequest
-	5,  // 8: customer.v1.CustomerService.UpdateCustomer:input_type -> customer.v1.UpdateCustomerRequest
-	7,  // 9: customer.v1.CustomerService.DeleteCustomer:input_type -> customer.v1.DeleteCustomerRequest
-	9,  // 10: customer.v1.CustomerService.Login:input_type -> customer.v1.LoginRequest
-	11, // 11: customer.v1.CustomerService.Logout:input_type -> customer.v1.LogoutRequest
-	3,  // 12: customer.v1.CustomerService.CreateCustomer:output_type -> customer.v1.CreateCustomerResponse
-	6,  // 13: customer.v1.CustomerService.ListCustomers:output_type -> customer.v1.ListCustomersResponse
-	6,  // 14: customer.v1.CustomerService.UpdateCustomer:output_type -> customer.v1.ListCustomersResponse
-	8,  // 15: customer.v1.CustomerService.DeleteCustomer:output_type -> customer.v1.DeleteCustomerResponse
-	10, // 16: customer.v1.CustomerService.Login:output_type -> customer.v1.LoginResponse
-	12, // 17: customer.v1.CustomerService.Logout:output_type -> customer.v1.LogoutResponse
-	12, // [12:18] is the sub-list for method output_type
-	6,  // [6:12] is the sub-list for method input_type
-	6,  // [6:6] is the sub-list for extension type_name
-	6,  // [6:6] is the sub-list for extension extendee
-	0,  // [0:6] is the sub-list for field type_name
+	0,  // 2: customer.v1.CreateCustomerRequest.customer:type_name -> customer.v1.Customer
+	0,  // 3: customer.v1.UpdateCustomerRequest.customer:type_name -> customer.v1.Customer
+	0,  // 4: customer.v1.ListCustomersResponse.customer:type_name -> customer.v1.Customer
+	1,  // 5: customer.v1.CustomerService.CreateCustomer:input_type -> customer.v1.CreateCustomerRequest
+	4,  // 6: customer.v1.CustomerService.ListCustomers:input_type -> customer.v1.ListCustomersRequest
+	5,  // 7: customer.v1.CustomerService.UpdateCustomer:input_type -> customer.v1.UpdateCustomerRequest
+	7,  // 8: customer.v1.CustomerService.DeleteCustomer:input_type -> customer.v1.DeleteCustomerRequest
+	9,  // 9: customer.v1.CustomerService.Login:input_type -> customer.v1.LoginRequest
+	11, // 10: customer.v1.CustomerService.Logout:input_type -> customer.v1.LogoutRequest
+	3,  // 11: customer.v1.CustomerService.CreateCustomer:output_type -> customer.v1.CreateCustomerResponse
+	6,  // 12: customer.v1.CustomerService.ListCustomers:output_type -> customer.v1.ListCustomersResponse
+	6,  // 13: customer.v1.CustomerService.UpdateCustomer:output_type -> customer.v1.ListCustomersResponse
+	8,  // 14: customer.v1.CustomerService.DeleteCustomer:output_type -> customer.v1.DeleteCustomerResponse
+	10, // 15: customer.v1.CustomerService.Login:output_type -> customer.v1.LoginResponse
+	12, // 16: customer.v1.CustomerService.Logout:output_type -> customer.v1.LogoutResponse
+	11, // [11:17] is the sub-list for method output_type
+	5,  // [5:11] is the sub-list for method input_type
+	5,  // [5:5] is the sub-list for extension type_name
+	5,  // [5:5] is the sub-list for extension extendee
+	0,  // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_customer_proto_v1_customer_proto_init() }

@@ -9,12 +9,12 @@ import (
 	"github.com/rodkevich/ts/customer/internal/resources"
 )
 
-type consumerPGRepository struct {
+type customerPG struct {
 	db *pgxpool.Pool
 }
 
-func NewConsumerPGRepository(db *pgxpool.Pool) *consumerPGRepository {
-	return &consumerPGRepository{db: db}
+func NewCustomerPG(db *pgxpool.Pool) *customerPG {
+	return &customerPG{db: db}
 }
 
 const (
@@ -25,9 +25,10 @@ const (
 	deleteCustomer = `DELETE FROM customers WHERE id = $1`
 )
 
-func (r *consumerPGRepository) CreateCustomer(ctx context.Context, arg resources.CreateCustomerParams) (resources.Customer, error) {
+func (r *customerPG) CreateCustomer(ctx context.Context, arg resources.CreateCustomerParams) (resources.Customer, error) {
 	row := r.db.QueryRow(ctx, createCustomer, arg.Type, arg.Login, arg.Password, arg.Identity)
 	var i resources.Customer
+
 	err := row.Scan(
 		&i.ID,
 		&i.Type,
@@ -42,12 +43,12 @@ func (r *consumerPGRepository) CreateCustomer(ctx context.Context, arg resources
 	return i, err
 }
 
-func (r *consumerPGRepository) DeleteCustomer(ctx context.Context, id uuid.UUID) error {
+func (r *customerPG) DeleteCustomer(ctx context.Context, id uuid.UUID) error {
 	_, err := r.db.Exec(ctx, deleteCustomer, id)
 	return err
 }
 
-func (r *consumerPGRepository) GetCustomer(ctx context.Context, id uuid.UUID) (resources.Customer, error) {
+func (r *customerPG) GetCustomer(ctx context.Context, id uuid.UUID) (resources.Customer, error) {
 	row := r.db.QueryRow(ctx, getCustomer, id)
 	var i resources.Customer
 	err := row.Scan(
@@ -64,7 +65,7 @@ func (r *consumerPGRepository) GetCustomer(ctx context.Context, id uuid.UUID) (r
 	return i, err
 }
 
-func (r *consumerPGRepository) ListCustomers(ctx context.Context) ([]resources.Customer, error) {
+func (r *customerPG) ListCustomers(ctx context.Context) ([]resources.Customer, error) {
 	rows, err := r.db.Query(ctx, listCustomers)
 	if err != nil {
 		return nil, err
@@ -94,7 +95,7 @@ func (r *consumerPGRepository) ListCustomers(ctx context.Context) ([]resources.C
 	return items, nil
 }
 
-func (r *consumerPGRepository) UpdateCustomer(ctx context.Context, arg resources.UpdateCustomerParams) (resources.Customer, error) {
+func (r *customerPG) UpdateCustomer(ctx context.Context, arg resources.UpdateCustomerParams) (resources.Customer, error) {
 	row := r.db.QueryRow(ctx, updateCustomer, arg.ID, arg.Type, arg.Status, arg.Login, arg.Password, arg.Identity, arg.CreatedAt, arg.UpdatedAt, arg.Deleted)
 	var i resources.Customer
 	err := row.Scan(

@@ -39,7 +39,7 @@ CREATE TYPE enum_tickets_advantages_type AS ENUM
 
 CREATE table if not exists tickets
 (
-    id           uuid           not null default gen_random_uuid(),
+    id           uuid                    default gen_random_uuid(),
     owner_id     uuid           not null,
     name_short   varchar        not null,
     name_ext     varchar,

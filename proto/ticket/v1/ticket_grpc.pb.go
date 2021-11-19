@@ -16,7 +16,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 // TicketServiceClient is the client API for TicketService service.
 //
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+// For semantics around ctx usage and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TicketServiceClient interface {
 	CreateTicket(ctx context.Context, in *CreateTicketRequest, opts ...grpc.CallOption) (*CreateTicketResponse, error)
 	ListTicket(ctx context.Context, in *ListTicketsRequest, opts ...grpc.CallOption) (*ListTicketsResponse, error)
@@ -181,7 +181,7 @@ func _TicketService_DeleteTicket_Handler(srv interface{}, ctx context.Context, d
 }
 
 // TicketService_ServiceDesc is the grpc.ServiceDesc for TicketService service.
-// It's only intended for direct use with grpc.RegisterService,
+// It's only intended for direct usage with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var TicketService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "ticket.v1.TicketService",
