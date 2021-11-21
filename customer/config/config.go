@@ -50,6 +50,7 @@ type Logger struct {
 	DisableStacktrace bool
 	Encoding          string
 	Level             string
+	OutputPaths       string
 }
 
 // PostgresConfig config

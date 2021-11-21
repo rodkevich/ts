@@ -3,12 +3,13 @@ module github.com/rodkevich/ts/customer
 go 1.17
 
 require (
+	github.com/go-chi/chi/v5 v5.0.7
+	github.com/go-playground/validator/v10 v10.9.0
 	github.com/golang/protobuf v1.5.2
 	github.com/google/uuid v1.3.0
+	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0
 	github.com/jackc/pgx/v4 v4.13.0
 	github.com/pkg/errors v0.8.1
-	github.com/rodkevich/ts v0.0.0-20211116090408-dc88c3667601
-	github.com/rodkevich/ts/server v0.0.0-20211116111759-fd371fa504c2
 	github.com/spf13/viper v1.9.0
 	go.uber.org/zap v1.17.0
 	google.golang.org/grpc v1.42.0
@@ -17,7 +18,8 @@ require (
 
 require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
-	github.com/grpc-ecosystem/go-grpc-middleware v1.3.0 // indirect
+	github.com/go-playground/locales v0.14.0 // indirect
+	github.com/go-playground/universal-translator v0.18.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.10.0 // indirect
@@ -27,10 +29,10 @@ require (
 	github.com/jackc/pgservicefile v0.0.0-20200714003250-2b9c44734f2b // indirect
 	github.com/jackc/pgtype v1.8.1 // indirect
 	github.com/jackc/puddle v1.1.3 // indirect
+	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/pelletier/go-toml v1.9.4 // indirect
-	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/spf13/afero v1.6.0 // indirect
 	github.com/spf13/cast v1.4.1 // indirect
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect

@@ -2,26 +2,38 @@ package grpc
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/google/uuid"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 
 	"github.com/rodkevich/ts/customer"
-	"github.com/rodkevich/ts/customer/internal/resources"
+	"github.com/rodkevich/ts/customer/internal/models"
 	"github.com/rodkevich/ts/customer/pkg/logger"
 	"github.com/rodkevich/ts/customer/pkg/types"
 	v1 "github.com/rodkevich/ts/customer/proto/v1"
 )
 
-type GrpcCustomerService struct {
+type CustomerGrpcService struct {
 	v1.UnimplementedCustomerServiceServer
 
-	UseSchema customer.UsageSchema
 	logger    logger.Logger
+	useSchema customer.Invoker
 }
 
-func (c *GrpcCustomerService) CreateCustomer(ctx context.Context, r *v1.CreateCustomerRequest) (*v1.CreateCustomerResponse, error) {
+func NewCustomerGrpcService(logger logger.Logger, useSchema customer.Invoker) *CustomerGrpcService {
+	return &CustomerGrpcService{logger: logger, useSchema: useSchema}
+}
 
-	res := resources.Customer{
+func (s *CustomerGrpcService) ListCustomers(ctx context.Context, request *v1.ListCustomersRequest) (*v1.ListCustomersResponse, error) {
+	c, _ := s.useSchema.ListCustomers(ctx, nil)
+	return &v1.ListCustomersResponse{Customers: c.ToProto()}, nil
+}
+
+func (s *CustomerGrpcService) CreateCustomer(ctx context.Context, r *v1.CreateCustomerRequest) (*v1.CreateCustomerResponse, error) {
+	// TODO: check passwd
+	res := models.Customer{
 		ID:        uuid.MustParse(r.Customer.GetId()),
 		Type:      types.EnumCustomersType(r.Customer.GetType()),
 		Status:    types.EnumCustomersStatus(r.Customer.GetStatus()),
@@ -33,30 +45,19 @@ func (c *GrpcCustomerService) CreateCustomer(ctx context.Context, r *v1.CreateCu
 		Deleted:   false,
 	}
 
-	customerId, err := c.UseSchema.CreateCustomer(ctx, &res)
+	customerId, err := s.useSchema.CreateCustomer(ctx, &res)
 	if err != nil {
-		return nil, err
+		s.logger.Errorf("useSchema.CreateCustomer: %v", err)
+		return nil, status.Errorf(codes.AlreadyExists, fmt.Sprintf("%s: %v", "CustomerService.CreateCustomer:", err))
 	}
 	resp := v1.CreateCustomerResponse{CustomerId: customerId.String()}
 	return &resp, nil
 }
 
-// func (c *Handler) ListCustomers(ctx context.Context, r *v1.ListCustomersRequest) (*v1.ListCustomersResponse, error) {
-// 	panic("implement me")
-// }
-//
-// func (c *Handler) UpdateCustomer(ctx context.Context, r *v1.UpdateCustomerRequest) (*v1.ListCustomersResponse, error) {
-// 	panic("implement me")
-// }
-//
-// func (c *Handler) DeleteCustomer(ctx context.Context, r *v1.DeleteCustomerRequest) (*v1.DeleteCustomerResponse, error) {
-// 	panic("implement me")
-// }
-//
-// func (c *Handler) Login(ctx context.Context, r *v1.LoginRequest) (*v1.LoginResponse, error) {
-// 	panic("implement me")
-// }
-//
-// func (c *Handler) Logout(ctx context.Context, r *v1.LogoutRequest) (*v1.LogoutResponse, error) {
-// 	panic("implement me")
-// }
+func (s *CustomerGrpcService) Login(ctx context.Context, request *v1.LoginRequest) (*v1.LoginResponse, error) {
+	panic("implement me")
+}
+
+func (s *CustomerGrpcService) Logout(ctx context.Context, request *v1.LogoutRequest) (*v1.LogoutResponse, error) {
+	panic("implement me")
+}

@@ -3,17 +3,17 @@ package postgres
 import (
 	"context"
 
+	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 
-	"github.com/google/uuid"
-	"github.com/rodkevich/ts/customer/internal/resources"
+	"github.com/rodkevich/ts/customer/internal/models"
 )
 
 type customerPG struct {
 	db *pgxpool.Pool
 }
 
-func NewCustomerPG(db *pgxpool.Pool) *customerPG {
+func NewCustomer(db *pgxpool.Pool) *customerPG {
 	return &customerPG{db: db}
 }
 
@@ -25,9 +25,9 @@ const (
 	deleteCustomer = `DELETE FROM customers WHERE id = $1`
 )
 
-func (r *customerPG) CreateCustomer(ctx context.Context, arg resources.CreateCustomerParams) (resources.Customer, error) {
+func (r *customerPG) CreateCustomer(ctx context.Context, arg models.CreateCustomerParams) (models.Customer, error) {
 	row := r.db.QueryRow(ctx, createCustomer, arg.Type, arg.Login, arg.Password, arg.Identity)
-	var i resources.Customer
+	var i models.Customer
 
 	err := row.Scan(
 		&i.ID,
@@ -48,9 +48,9 @@ func (r *customerPG) DeleteCustomer(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
-func (r *customerPG) GetCustomer(ctx context.Context, id uuid.UUID) (resources.Customer, error) {
+func (r *customerPG) GetCustomer(ctx context.Context, id uuid.UUID) (models.Customer, error) {
 	row := r.db.QueryRow(ctx, getCustomer, id)
-	var i resources.Customer
+	var i models.Customer
 	err := row.Scan(
 		&i.ID,
 		&i.Type,
@@ -65,39 +65,39 @@ func (r *customerPG) GetCustomer(ctx context.Context, id uuid.UUID) (resources.C
 	return i, err
 }
 
-func (r *customerPG) ListCustomers(ctx context.Context) ([]resources.Customer, error) {
+func (r *customerPG) ListCustomers(ctx context.Context) (*models.CustomersList, error) {
 	rows, err := r.db.Query(ctx, listCustomers)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []resources.Customer
+	customers := make([]*models.Customer, 0)
 	for rows.Next() {
-		var i resources.Customer
+		var c models.Customer
 		if err := rows.Scan(
-			&i.ID,
-			&i.Type,
-			&i.Status,
-			&i.Login,
-			&i.Password,
-			&i.Identity,
-			&i.CreatedAt,
-			&i.UpdatedAt,
-			&i.Deleted,
+			&c.ID,
+			&c.Type,
+			&c.Status,
+			&c.Login,
+			&c.Password,
+			&c.Identity,
+			&c.CreatedAt,
+			&c.UpdatedAt,
+			&c.Deleted,
 		); err != nil {
 			return nil, err
 		}
-		items = append(items, i)
+		customers = append(customers, &c)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
-	return items, nil
+	return &models.CustomersList{Customers: customers}, nil
 }
 
-func (r *customerPG) UpdateCustomer(ctx context.Context, arg resources.UpdateCustomerParams) (resources.Customer, error) {
+func (r *customerPG) UpdateCustomer(ctx context.Context, arg models.UpdateCustomerParams) (models.Customer, error) {
 	row := r.db.QueryRow(ctx, updateCustomer, arg.ID, arg.Type, arg.Status, arg.Login, arg.Password, arg.Identity, arg.CreatedAt, arg.UpdatedAt, arg.Deleted)
-	var i resources.Customer
+	var i models.Customer
 	err := row.Scan(
 		&i.ID,
 		&i.Type,

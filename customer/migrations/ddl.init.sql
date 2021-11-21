@@ -1,13 +1,13 @@
 -- v0.1.0
 
--- DROP TABLE if exists customers;
+DROP TABLE if exists customers;
 
 -- EXTENSIONS ------------------------------------------------------------------
 CREATE EXTENSION if not exists "pgcrypto";
 CREATE EXTENSION if not exists CITEXT;
 
 --- COMMON FUNCTIONS -----------------------------------------------------------
-CREATE or replace function touch_updated_at()
+CREATE or replace FUNCTION touch_updated_at()
     returns trigger as
 $$
 begin
@@ -30,8 +30,8 @@ CREATE table if not exists customers
     id         uuid                  default gen_random_uuid(),
     type       enum_customers_type   default 'User'::enum_customers_type,
     status     enum_customers_status default 'Pending'::enum_customers_status,
-    login      varchar(60)  not null unique,
-    password   varchar(100) not null,
+    login      varchar(60)  not null unique CHECK ( login <> '' ),
+    password   varchar(100) not null CHECK ( octet_length(password) <> 0 ),
     identity   text, -- how to make this unique if presented??
     created_at timestamptz  not null default now(),
     updated_at timestamptz  not null default now(),
