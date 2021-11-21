@@ -27,7 +27,11 @@ func NewCustomerGrpcService(logger logger.Logger, useSchema customer.Invoker) *C
 }
 
 func (s *CustomerGrpcService) ListCustomers(ctx context.Context, request *v1.ListCustomersRequest) (*v1.ListCustomersResponse, error) {
-	c, _ := s.useSchema.ListCustomers(ctx, nil)
+	c, err := s.useSchema.ListCustomers(ctx, nil)
+	if err != nil {
+		s.logger.Errorf("useSchema.ListCustomers: %v", err)
+		return nil, status.Errorf(codes.Internal, fmt.Sprintf("%s: %v", "CustomerService.ListCustomers:", err))
+	}
 	return &v1.ListCustomersResponse{Customers: c.ToProto()}, nil
 }
 
