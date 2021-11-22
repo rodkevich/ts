@@ -20,6 +20,7 @@ message Customer {
 
 service CustomerService {
   rpc CreateCustomer (CreateCustomerRequest) returns (CreateCustomerResponse);
+  rpc GetCustomer (ListCustomersRequest) returns (ListCustomersResponse);
   rpc ListCustomers (ListCustomersRequest) returns (ListCustomersResponse);
   rpc UpdateCustomer (UpdateCustomerRequest) returns (ListCustomersResponse);
   rpc DeleteCustomer (DeleteCustomerRequest) returns (DeleteCustomerResponse);
@@ -34,24 +35,19 @@ message CreateCustomerRequest {
   //  map<string, string> optional = 6;
 }
 
-message AddressResponse {
-  string transactions_count = 2;
-}
-
 message CreateCustomerResponse {
-  string customer_id = 1;
+  Customer customer = 1;
 }
 
 message ListCustomersRequest {
   string customer_id = 1;
 }
 
-message UpdateCustomerRequest {
-  Customer customer = 1;
-}
-
 message ListCustomersResponse {
   repeated Customer customers = 1;
+}
+message UpdateCustomerRequest {
+  Customer customer = 1;
 }
 
 message DeleteCustomerRequest {

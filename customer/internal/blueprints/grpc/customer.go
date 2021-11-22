@@ -49,12 +49,12 @@ func (s *CustomerGrpcService) CreateCustomer(ctx context.Context, r *v1.CreateCu
 		Deleted:   false,
 	}
 
-	customerId, err := s.useSchema.CreateCustomer(ctx, &res)
+	customer, err := s.useSchema.CreateCustomer(ctx, &res)
 	if err != nil {
 		s.logger.Errorf("useSchema.CreateCustomer: %v", err)
 		return nil, status.Errorf(codes.AlreadyExists, fmt.Sprintf("%s: %v", "CustomerService.CreateCustomer:", err))
 	}
-	resp := v1.CreateCustomerResponse{CustomerId: customerId.String()}
+	resp := v1.CreateCustomerResponse{Customer: customer.ToProto()}
 	return &resp, nil
 }
 

@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CustomerServiceClient interface {
 	CreateCustomer(ctx context.Context, in *CreateCustomerRequest, opts ...grpc.CallOption) (*CreateCustomerResponse, error)
+	GETCustomer(ctx context.Context, in *ListCustomersRequest, opts ...grpc.CallOption) (*ListCustomersResponse, error)
 	ListCustomers(ctx context.Context, in *ListCustomersRequest, opts ...grpc.CallOption) (*ListCustomersResponse, error)
 	UpdateCustomer(ctx context.Context, in *UpdateCustomerRequest, opts ...grpc.CallOption) (*ListCustomersResponse, error)
 	DeleteCustomer(ctx context.Context, in *DeleteCustomerRequest, opts ...grpc.CallOption) (*DeleteCustomerResponse, error)
@@ -37,6 +38,15 @@ func NewCustomerServiceClient(cc grpc.ClientConnInterface) CustomerServiceClient
 func (c *customerServiceClient) CreateCustomer(ctx context.Context, in *CreateCustomerRequest, opts ...grpc.CallOption) (*CreateCustomerResponse, error) {
 	out := new(CreateCustomerResponse)
 	err := c.cc.Invoke(ctx, "/customer.v1.CustomerService/CreateCustomer", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *customerServiceClient) GETCustomer(ctx context.Context, in *ListCustomersRequest, opts ...grpc.CallOption) (*ListCustomersResponse, error) {
+	out := new(ListCustomersResponse)
+	err := c.cc.Invoke(ctx, "/customer.v1.CustomerService/GETCustomer", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -93,6 +103,7 @@ func (c *customerServiceClient) Logout(ctx context.Context, in *LogoutRequest, o
 // for forward compatibility
 type CustomerServiceServer interface {
 	CreateCustomer(context.Context, *CreateCustomerRequest) (*CreateCustomerResponse, error)
+	GETCustomer(context.Context, *ListCustomersRequest) (*ListCustomersResponse, error)
 	ListCustomers(context.Context, *ListCustomersRequest) (*ListCustomersResponse, error)
 	UpdateCustomer(context.Context, *UpdateCustomerRequest) (*ListCustomersResponse, error)
 	DeleteCustomer(context.Context, *DeleteCustomerRequest) (*DeleteCustomerResponse, error)
@@ -107,6 +118,9 @@ type UnimplementedCustomerServiceServer struct {
 
 func (UnimplementedCustomerServiceServer) CreateCustomer(context.Context, *CreateCustomerRequest) (*CreateCustomerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateCustomer not implemented")
+}
+func (UnimplementedCustomerServiceServer) GETCustomer(context.Context, *ListCustomersRequest) (*ListCustomersResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GETCustomer not implemented")
 }
 func (UnimplementedCustomerServiceServer) ListCustomers(context.Context, *ListCustomersRequest) (*ListCustomersResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCustomers not implemented")
@@ -150,6 +164,24 @@ func _CustomerService_CreateCustomer_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CustomerServiceServer).CreateCustomer(ctx, req.(*CreateCustomerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CustomerService_GETCustomer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCustomersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CustomerServiceServer).GETCustomer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/customer.v1.CustomerService/GETCustomer",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CustomerServiceServer).GETCustomer(ctx, req.(*ListCustomersRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -254,6 +286,10 @@ var CustomerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateCustomer",
 			Handler:    _CustomerService_CreateCustomer_Handler,
+		},
+		{
+			MethodName: "GETCustomer",
+			Handler:    _CustomerService_GETCustomer_Handler,
 		},
 		{
 			MethodName: "ListCustomers",

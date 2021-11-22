@@ -1,14 +1,14 @@
 package models
 
 import (
-	"google.golang.org/protobuf/types/known/timestamppb"
 	"time"
 
-	v1 "github.com/rodkevich/ts/customer/proto/v1"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/google/uuid"
 
 	"github.com/rodkevich/ts/customer/pkg/types"
+	v1 "github.com/rodkevich/ts/customer/proto/v1"
 )
 
 type CreateCustomerParams struct {
@@ -45,16 +45,15 @@ type Customer struct {
 // ToProto ..
 func (c *Customer) ToProto() *v1.Customer {
 	return &v1.Customer{
-		Id:     c.ID.String(),
-		Type:   "",
-		Status: "",
-		// Status:    string(c.Type),
+		Id:        c.ID.String(),
+		Type:      string(c.Type),
+		Status:    string(c.Type),
 		Login:     c.Login,
-		Password:  "",
-		Identity:  "",
+		Password:  c.Password,
+		Identity:  *c.Identity,
 		CreatedAt: timestamppb.New(c.CreatedAt),
-		UpdatedAt: nil,
-		Deleted:   false,
+		UpdatedAt: timestamppb.New(c.UpdatedAt),
+		Deleted:   c.Deleted,
 	}
 }
 

@@ -9,7 +9,8 @@ import (
 )
 
 type Invoker interface {
-	CreateCustomer(context.Context, *models.Customer) (uuid.UUID, error)
+	CreateCustomer(context.Context, *models.Customer) (*models.Customer, error)
+	GetCustomer(context.Context, uuid.UUID) (*models.Customer, error)
 	ListCustomers(context.Context, *models.Customer) (*models.CustomersList, error)
 	UpdateCustomer(context.Context, uuid.UUID) (*models.Customer, error)
 	DeleteCustomer(context.Context, *models.Customer) (*models.Customer, error)

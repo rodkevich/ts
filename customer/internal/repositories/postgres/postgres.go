@@ -25,7 +25,7 @@ const (
 	deleteCustomer = `DELETE FROM customers WHERE id = $1`
 )
 
-func (r *customerPG) CreateCustomer(ctx context.Context, arg models.CreateCustomerParams) (models.Customer, error) {
+func (r *customerPG) CreateCustomer(ctx context.Context, arg models.CreateCustomerParams) (*models.Customer, error) {
 	row := r.db.QueryRow(ctx, createCustomer, arg.Type, arg.Login, arg.Password, arg.Identity)
 	var i models.Customer
 
@@ -40,15 +40,10 @@ func (r *customerPG) CreateCustomer(ctx context.Context, arg models.CreateCustom
 		&i.UpdatedAt,
 		&i.Deleted,
 	)
-	return i, err
+	return &i, err
 }
 
-func (r *customerPG) DeleteCustomer(ctx context.Context, id uuid.UUID) error {
-	_, err := r.db.Exec(ctx, deleteCustomer, id)
-	return err
-}
-
-func (r *customerPG) GetCustomer(ctx context.Context, id uuid.UUID) (models.Customer, error) {
+func (r *customerPG) GetCustomer(ctx context.Context, id uuid.UUID) (*models.Customer, error) {
 	row := r.db.QueryRow(ctx, getCustomer, id)
 	var i models.Customer
 	err := row.Scan(
@@ -62,7 +57,12 @@ func (r *customerPG) GetCustomer(ctx context.Context, id uuid.UUID) (models.Cust
 		&i.UpdatedAt,
 		&i.Deleted,
 	)
-	return i, err
+	return &i, err
+}
+
+func (r *customerPG) DeleteCustomer(ctx context.Context, id uuid.UUID) error {
+	_, err := r.db.Exec(ctx, deleteCustomer, id)
+	return err
 }
 
 func (r *customerPG) ListCustomers(ctx context.Context) (*models.CustomersList, error) {
@@ -95,7 +95,7 @@ func (r *customerPG) ListCustomers(ctx context.Context) (*models.CustomersList, 
 	return &models.CustomersList{Customers: customers}, nil
 }
 
-func (r *customerPG) UpdateCustomer(ctx context.Context, arg models.UpdateCustomerParams) (models.Customer, error) {
+func (r *customerPG) UpdateCustomer(ctx context.Context, arg models.UpdateCustomerParams) (*models.Customer, error) {
 	row := r.db.QueryRow(ctx, updateCustomer, arg.ID, arg.Type, arg.Status, arg.Login, arg.Password, arg.Identity, arg.CreatedAt, arg.UpdatedAt, arg.Deleted)
 	var i models.Customer
 	err := row.Scan(
@@ -109,5 +109,5 @@ func (r *customerPG) UpdateCustomer(ctx context.Context, arg models.UpdateCustom
 		&i.UpdatedAt,
 		&i.Deleted,
 	)
-	return i, err
+	return &i, err
 }

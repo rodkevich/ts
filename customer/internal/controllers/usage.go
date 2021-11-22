@@ -8,41 +8,16 @@ import (
 	"github.com/rodkevich/ts/customer/pkg/logger"
 )
 
-type actions struct {
+type controller struct {
 	customerPGRepo customer.Proprietor
 	logger         logger.Logger
 }
 
-func NewCustomerController(log logger.Logger, customerRepo customer.Proprietor) *actions {
-	return &actions{customerPGRepo: customerRepo, logger: log}
+func NewCustomerController(log logger.Logger, customerRepo customer.Proprietor) *controller {
+	return &controller{customerPGRepo: customerRepo, logger: log}
 }
 
-func (a *actions) ListCustomers(ctx context.Context, m *models.Customer) (*models.CustomersList, error) {
-	// TODO: handle m *models.Customer
-	customers, err := a.customerPGRepo.ListCustomers(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return customers, nil
-}
-
-func (a *actions) UpdateCustomer(ctx context.Context, u uuid.UUID) (*models.Customer, error) {
-	panic("implement me")
-}
-
-func (a *actions) DeleteCustomer(ctx context.Context, m *models.Customer) (*models.Customer, error) {
-	panic("implement me")
-}
-
-func (a *actions) Login(ctx context.Context, id string, password string) error {
-	panic("implement me")
-}
-
-func (a *actions) Logout(ctx context.Context, id string) error {
-	panic("implement me")
-}
-
-func (a actions) CreateCustomer(ctx context.Context, m *models.Customer) (uuid uuid.UUID, err error) {
+func (c controller) CreateCustomer(ctx context.Context, m *models.Customer) (uuid *models.Customer, err error) {
 	arg := models.CreateCustomerParams{
 		Type:     m.Type,
 		Login:    m.Login,
@@ -50,11 +25,40 @@ func (a actions) CreateCustomer(ctx context.Context, m *models.Customer) (uuid u
 		Identity: m.Identity,
 	}
 
-	createCustomer, err := a.customerPGRepo.CreateCustomer(ctx, arg)
+	createCustomer, err := c.customerPGRepo.CreateCustomer(ctx, arg)
 	if err != nil {
-		a.logger.Debug("CreateCustomer controller:", err)
+		c.logger.Debug("CreateCustomer controller:", err)
 		return
 	}
 
-	return createCustomer.ID, nil
+	return createCustomer, nil
+}
+
+func (c *controller) GetCustomer(ctx context.Context, u uuid.UUID) (*models.Customer, error) {
+	panic("not implemented")
+}
+
+func (c *controller) ListCustomers(ctx context.Context, m *models.Customer) (*models.CustomersList, error) {
+	// TODO: handle m *models.Customer
+	customers, err := c.customerPGRepo.ListCustomers(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return customers, nil
+}
+
+func (c *controller) UpdateCustomer(ctx context.Context, u uuid.UUID) (*models.Customer, error) {
+	panic("implement me")
+}
+
+func (c *controller) DeleteCustomer(ctx context.Context, m *models.Customer) (*models.Customer, error) {
+	panic("implement me")
+}
+
+func (c *controller) Login(ctx context.Context, id string, password string) error {
+	panic("implement me")
+}
+
+func (c *controller) Logout(ctx context.Context, id string) error {
+	panic("implement me")
 }

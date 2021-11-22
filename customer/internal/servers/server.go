@@ -2,6 +2,7 @@ package servers
 
 import (
 	"context"
+	"encoding/json"
 	"log"
 	"net"
 	"net/http"
@@ -106,13 +107,20 @@ func (s *Server) Run() error {
 
 	// Http //
 	s.chi.Route("/ping", func(r chi.Router) {
-		s.chi.Use(middleware.RequestID)
-		s.chi.Use(middleware.Logger)
-		s.chi.Use(middleware.RealIP)
-		s.chi.Use(middleware.Recoverer)
+		r.Use(middleware.RequestID)
+		r.Use(middleware.Logger)
+		r.Use(middleware.RealIP)
+		r.Use(middleware.Recoverer)
 		s.logger.Info("=====/ping =======")
-		s.chi.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("pong"))
+		})
+		r.Get("/config", func(w http.ResponseWriter, r *http.Request) {
+			cfg, err := json.Marshal(s.cfg)
+			if err != nil {
+				s.logger.Errorf("Unable to parse config: %v", err)
+			}
+			w.Write(cfg)
 		})
 	})
 	serverHTTP := http.Server{
