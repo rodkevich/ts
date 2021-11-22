@@ -1,10 +1,9 @@
 -- v0.1.0
 
-DROP TABLE if exists customers;
+-- DROP TABLE if exists customers;
 
 -- EXTENSIONS ------------------------------------------------------------------
 CREATE EXTENSION if not exists "pgcrypto";
-CREATE EXTENSION if not exists CITEXT;
 
 --- COMMON FUNCTIONS -----------------------------------------------------------
 CREATE or replace FUNCTION touch_updated_at()
