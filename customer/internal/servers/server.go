@@ -98,7 +98,10 @@ func (s *Server) Run() error {
 
 	go func() {
 		s.logger.Infof("GRPC Server is listening on port: %v", s.cfg.GRPCServer.Port)
-		s.logger.Fatal(serverGRPC.Serve(lis), "serverGRPC.Serve(lis) failed")
+		err := serverGRPC.Serve(lis)
+		if err != nil {
+			s.logger.Fatal("serverGRPC.Serve(lis) is not running")
+		}
 	}()
 
 	if s.cfg.GRPCServer.Mode != "Production" {
@@ -107,11 +110,11 @@ func (s *Server) Run() error {
 
 	// Http //
 	s.chi.Route("/ping", func(r chi.Router) {
+		s.logger.Info("sub-router ping: enabled")
 		r.Use(middleware.RequestID)
 		r.Use(middleware.Logger)
 		r.Use(middleware.RealIP)
 		r.Use(middleware.Recoverer)
-		s.logger.Info("=====/ping =======")
 		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
 			w.Write([]byte("pong"))
 		})
@@ -137,12 +140,12 @@ func (s *Server) Run() error {
 	go func() {
 		<-sig
 		// Shutdown signal with grace period of 30 seconds
-		shutdownCtx, _ := context.WithTimeout(serverCtx, 30*time.Second)
+		shutdownCtx, _ := context.WithTimeout(serverCtx, 2*time.Second)
 
 		go func() {
 			<-shutdownCtx.Done()
 			if shutdownCtx.Err() == context.DeadlineExceeded {
-				s.logger.Errorf("graceful shutdown timed out.. forcing exit")
+				s.logger.Fatal("graceful shutdown timed out.. forcing exit")
 			}
 		}()
 		// Trigger graceful shutdown
@@ -150,9 +153,11 @@ func (s *Server) Run() error {
 		if err != nil {
 			log.Fatal(err)
 		}
-		serverStopCancel()
 
 		serverGRPC.GracefulStop()
+		time.Sleep(3 * time.Second)
+		serverStopCancel()
+
 		s.logger.Info("Server Exited Properly")
 	}()
 	// Run http server

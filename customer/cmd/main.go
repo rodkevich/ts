@@ -37,5 +37,5 @@ func main() {
 	appLogger.Infof("%-v", pgxConn.Config().ConnString())
 	// server
 	s := servers.NewServer(appLogger, cfg, pgxConn)
-	appLogger.Fatal(s.Run(), " server stopped running")
+	appLogger.Fatal(" server stopped running: ERRORS: ", s.Run())
 }
