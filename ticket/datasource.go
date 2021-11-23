@@ -19,4 +19,10 @@ type ProprietorTickets interface {
 	ChangeTicketDeletedState(ctx context.Context, deleted bool, id uuid.UUID) (*models.Ticket, error)
 
 	DeleteTicket(ctx context.Context, id uuid.UUID) error
+
+	CreateTag()
+	GetTag()
+	ListTags()
+	UpdateTag()
+	DeleteTag()
 }
