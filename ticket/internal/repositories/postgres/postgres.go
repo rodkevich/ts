@@ -28,9 +28,9 @@ const (
 	deleteTicket                = `DELETE FROM tickets WHERE id = $1`
 )
 
-func (tpg *ticketPG) ChangeTicketActivenessState(ctx context.Context, active bool) (*models.Ticket, error) {
+func (tpg *ticketPG) ChangeTicketActivenessState(ctx context.Context, active bool, id uuid.UUID) (*models.Ticket, error) {
 	row := tpg.db.QueryRow(
-		ctx, changeTicketActivenessState, active,
+		ctx, changeTicketActivenessState, active, id,
 	)
 	var rtn models.Ticket
 	err := row.Scan(
@@ -42,9 +42,9 @@ func (tpg *ticketPG) ChangeTicketActivenessState(ctx context.Context, active boo
 	return &rtn, err
 }
 
-func (tpg *ticketPG) ChangeTicketPublishState(ctx context.Context, published bool) (*models.Ticket, error) {
+func (tpg *ticketPG) ChangeTicketPublishState(ctx context.Context, published bool, id uuid.UUID) (*models.Ticket, error) {
 	row := tpg.db.QueryRow(
-		ctx, changeTicketPublishState, published,
+		ctx, changeTicketPublishState, published, id,
 	)
 	var rtn models.Ticket
 	err := row.Scan(
