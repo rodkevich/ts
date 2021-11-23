@@ -21,10 +21,10 @@ const (
 	createTicket                = `INSERT INTO tickets (owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
 	getTicket                   = `SELECT id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted FROM tickets WHERE id = $1 LIMIT 1`
 	listTickets                 = `SELECT id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted FROM tickets ORDER BY updated_at DESC`
-	updateTicket                = `UPDATE tickets SET owner_id=$1, name_short=$2, name_ext=$3, description=$4, amount=$5, price=$6, currency=$7, priority=$8, published=$9, active=$10 WHERE id = $1 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
-	changeTicketActivenessState = `UPDATE tickets SET active=$1 WHERE id = $1 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
-	changeTicketPublishState    = `UPDATE tickets SET published=$1 WHERE id = $1 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
-	markTicketAsDeleted         = `UPDATE tickets SET deleted=$1 WHERE id = $1 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
+	updateTicket                = `UPDATE tickets SET owner_id=$1, name_short=$2, name_ext=$3, description=$4, amount=$5, price=$6, currency=$7, priority=$8, published=$9, active=$10 WHERE id = $11 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
+	changeTicketActivenessState = `UPDATE tickets SET active=$1 WHERE id = $2 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
+	changeTicketPublishState    = `UPDATE tickets SET published=$1 WHERE id = $2 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
+	markTicketAsDeleted         = `UPDATE tickets SET deleted=$1 WHERE id = $2 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
 	deleteTicket                = `DELETE FROM tickets WHERE id = $1`
 )
 
@@ -121,9 +121,9 @@ func (tpg *ticketPG) ListTickets(ctx context.Context) (*models.TicketsList, erro
 	return &models.TicketsList{Tickets: rtn}, nil
 }
 
-func (tpg *ticketPG) MarkTicketAsDeleted(ctx context.Context, deleted bool) (*models.Ticket, error) {
+func (tpg *ticketPG) MarkTicketAsDeleted(ctx context.Context, deleted bool, id uuid.UUID) (*models.Ticket, error) {
 	row := tpg.db.QueryRow(
-		ctx, markTicketAsDeleted, deleted,
+		ctx, markTicketAsDeleted, deleted, id,
 	)
 	var rtn models.Ticket
 	err := row.Scan(
@@ -135,12 +135,12 @@ func (tpg *ticketPG) MarkTicketAsDeleted(ctx context.Context, deleted bool) (*mo
 	return &rtn, err
 }
 
-func (tpg *ticketPG) UpdateTicket(ctx context.Context, arg models.UpdateTicketParams) (*models.Ticket, error) {
+func (tpg *ticketPG) UpdateTicket(ctx context.Context, arg models.UpdateTicketParams, id uuid.UUID) (*models.Ticket, error) {
 	row := tpg.db.QueryRow(
 		ctx, updateTicket,
 		arg.OwnerID, arg.NameShort, arg.NameExt, arg.Description,
 		arg.Amount, arg.Price, arg.Currency, arg.Priority,
-		arg.Published, arg.Active,
+		arg.Published, arg.Active, id,
 	)
 	var rtn models.Ticket
 	err := row.Scan(
