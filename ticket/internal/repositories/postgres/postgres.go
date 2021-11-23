@@ -24,37 +24,9 @@ const (
 	updateTicket                = `UPDATE tickets SET owner_id=$1, name_short=$2, name_ext=$3, description=$4, amount=$5, price=$6, currency=$7, priority=$8, published=$9, active=$10 WHERE id = $11 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
 	changeTicketActivenessState = `UPDATE tickets SET active=$1 WHERE id = $2 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
 	changeTicketPublishState    = `UPDATE tickets SET published=$1 WHERE id = $2 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
-	markTicketAsDeleted         = `UPDATE tickets SET deleted=$1 WHERE id = $2 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
+	changeTicketDeletedState    = `UPDATE tickets SET deleted=$1 WHERE id = $2 RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted`
 	deleteTicket                = `DELETE FROM tickets WHERE id = $1`
 )
-
-func (tpg *ticketPG) ChangeTicketActivenessState(ctx context.Context, active bool, id uuid.UUID) (*models.Ticket, error) {
-	row := tpg.db.QueryRow(
-		ctx, changeTicketActivenessState, active, id,
-	)
-	var rtn models.Ticket
-	err := row.Scan(
-		&rtn.ID, &rtn.OwnerID, &rtn.NameShort, &rtn.NameExt,
-		&rtn.Description, &rtn.Amount, &rtn.Price, &rtn.Currency,
-		&rtn.Priority, &rtn.Published, &rtn.Active, &rtn.CreatedAt,
-		&rtn.UpdatedAt, &rtn.Deleted,
-	)
-	return &rtn, err
-}
-
-func (tpg *ticketPG) ChangeTicketPublishState(ctx context.Context, published bool, id uuid.UUID) (*models.Ticket, error) {
-	row := tpg.db.QueryRow(
-		ctx, changeTicketPublishState, published, id,
-	)
-	var rtn models.Ticket
-	err := row.Scan(
-		&rtn.ID, &rtn.OwnerID, &rtn.NameShort, &rtn.NameExt,
-		&rtn.Description, &rtn.Amount, &rtn.Price, &rtn.Currency,
-		&rtn.Priority, &rtn.Published, &rtn.Active, &rtn.CreatedAt,
-		&rtn.UpdatedAt, &rtn.Deleted,
-	)
-	return &rtn, err
-}
 
 func (tpg *ticketPG) CreateTicket(ctx context.Context, arg models.CreateTicketParams) (*models.Ticket, error) {
 	row := tpg.db.QueryRow(
@@ -71,13 +43,6 @@ func (tpg *ticketPG) CreateTicket(ctx context.Context, arg models.CreateTicketPa
 		&rtn.UpdatedAt, &rtn.Deleted,
 	)
 	return &rtn, err
-}
-
-func (tpg *ticketPG) DeleteTicket(ctx context.Context, id uuid.UUID) error {
-	_, err := tpg.db.Exec(
-		ctx, deleteTicket, id,
-	)
-	return err
 }
 
 func (tpg *ticketPG) GetTicket(ctx context.Context, id uuid.UUID) (*models.Ticket, error) {
@@ -121,20 +86,6 @@ func (tpg *ticketPG) ListTickets(ctx context.Context) (*models.TicketsList, erro
 	return &models.TicketsList{Tickets: rtn}, nil
 }
 
-func (tpg *ticketPG) MarkTicketAsDeleted(ctx context.Context, deleted bool, id uuid.UUID) (*models.Ticket, error) {
-	row := tpg.db.QueryRow(
-		ctx, markTicketAsDeleted, deleted, id,
-	)
-	var rtn models.Ticket
-	err := row.Scan(
-		&rtn.ID, &rtn.OwnerID, &rtn.NameShort, &rtn.NameExt,
-		&rtn.Description, &rtn.Amount, &rtn.Price,
-		&rtn.Currency, &rtn.Priority, &rtn.Published,
-		&rtn.Active, &rtn.CreatedAt, &rtn.UpdatedAt, &rtn.Deleted,
-	)
-	return &rtn, err
-}
-
 func (tpg *ticketPG) UpdateTicket(ctx context.Context, arg models.UpdateTicketParams, id uuid.UUID) (*models.Ticket, error) {
 	row := tpg.db.QueryRow(
 		ctx, updateTicket,
@@ -149,4 +100,53 @@ func (tpg *ticketPG) UpdateTicket(ctx context.Context, arg models.UpdateTicketPa
 		&rtn.Active, &rtn.CreatedAt, &rtn.UpdatedAt, &rtn.Deleted,
 	)
 	return &rtn, err
+}
+
+func (tpg *ticketPG) ChangeTicketActivenessState(ctx context.Context, active bool, id uuid.UUID) (*models.Ticket, error) {
+	row := tpg.db.QueryRow(
+		ctx, changeTicketActivenessState, active, id,
+	)
+	var rtn models.Ticket
+	err := row.Scan(
+		&rtn.ID, &rtn.OwnerID, &rtn.NameShort, &rtn.NameExt,
+		&rtn.Description, &rtn.Amount, &rtn.Price, &rtn.Currency,
+		&rtn.Priority, &rtn.Published, &rtn.Active, &rtn.CreatedAt,
+		&rtn.UpdatedAt, &rtn.Deleted,
+	)
+	return &rtn, err
+}
+
+func (tpg *ticketPG) ChangeTicketPublishState(ctx context.Context, published bool, id uuid.UUID) (*models.Ticket, error) {
+	row := tpg.db.QueryRow(
+		ctx, changeTicketPublishState, published, id,
+	)
+	var rtn models.Ticket
+	err := row.Scan(
+		&rtn.ID, &rtn.OwnerID, &rtn.NameShort, &rtn.NameExt,
+		&rtn.Description, &rtn.Amount, &rtn.Price, &rtn.Currency,
+		&rtn.Priority, &rtn.Published, &rtn.Active, &rtn.CreatedAt,
+		&rtn.UpdatedAt, &rtn.Deleted,
+	)
+	return &rtn, err
+}
+
+func (tpg *ticketPG) ChangeTicketDeletedState(ctx context.Context, deleted bool, id uuid.UUID) (*models.Ticket, error) {
+	row := tpg.db.QueryRow(
+		ctx, changeTicketDeletedState, deleted, id,
+	)
+	var rtn models.Ticket
+	err := row.Scan(
+		&rtn.ID, &rtn.OwnerID, &rtn.NameShort, &rtn.NameExt,
+		&rtn.Description, &rtn.Amount, &rtn.Price,
+		&rtn.Currency, &rtn.Priority, &rtn.Published,
+		&rtn.Active, &rtn.CreatedAt, &rtn.UpdatedAt, &rtn.Deleted,
+	)
+	return &rtn, err
+}
+
+func (tpg *ticketPG) DeleteTicket(ctx context.Context, id uuid.UUID) error {
+	_, err := tpg.db.Exec(
+		ctx, deleteTicket, id,
+	)
+	return err
 }
