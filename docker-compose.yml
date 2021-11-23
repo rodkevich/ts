@@ -3,23 +3,21 @@ version: '3'
 
 services:
 
-  postgres-profile:
+  postgres-customer:
     image: postgres:latest
-    container_name: postgres-profile
+    container_name: postgres-customer
     env_file:
-      - build/docker/profile/dev.profile.database.env
+      - build/docker/customer/dev.customer.database.env
     ports:
       - "5555:5432/tcp"
 
-  #  postgres-profile:
-  #    image: postgres:latest
-  #    volumes:
-  #      - ./build/users/migrations/init.sql:/docker-entrypoint-initdb.d/init.sql
-  #    container_name: gmp-postgres-persons
-  #    env_file:
-  #      - build/users/docker/dev.users.database.env
-  #    ports:
-  #      - "5532:5432/tcp"
+  postgres-ticket:
+    image: postgres:latest
+    container_name: postgres-ticket
+    env_file:
+      - build/docker/ticket/dev.ticket.database.env
+    ports:
+      - "5556:5432/tcp"
 
 #  docker run -it -p 27017:27017 --name mongo mongo:4 mongo
 # MONGO_URI=mongodb://127.0.0.1:27217/bpm ./cbpm-backend

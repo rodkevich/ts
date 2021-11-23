@@ -26,88 +26,82 @@ const (
 )
 
 func (r *customerPG) CreateCustomer(ctx context.Context, arg models.CreateCustomerParams) (*models.Customer, error) {
-	row := r.db.QueryRow(ctx, createCustomer, arg.Type, arg.Login, arg.Password, arg.Identity)
-	var i models.Customer
-
-	err := row.Scan(
-		&i.ID,
-		&i.Type,
-		&i.Status,
-		&i.Login,
-		&i.Password,
-		&i.Identity,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.Deleted,
+	row := r.db.QueryRow(
+		ctx, createCustomer, arg.Type, arg.Login, arg.Password, arg.Identity,
 	)
-	return &i, err
+
+	var rtn models.Customer
+	err := row.Scan(
+		&rtn.ID, &rtn.Type, &rtn.Status, &rtn.Login,
+		&rtn.Password, &rtn.Identity, &rtn.CreatedAt,
+		&rtn.UpdatedAt, &rtn.Deleted,
+	)
+	return &rtn, err
 }
 
 func (r *customerPG) GetCustomer(ctx context.Context, id uuid.UUID) (*models.Customer, error) {
-	row := r.db.QueryRow(ctx, getCustomer, id)
-	var i models.Customer
-	err := row.Scan(
-		&i.ID,
-		&i.Type,
-		&i.Status,
-		&i.Login,
-		&i.Password,
-		&i.Identity,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.Deleted,
+	row := r.db.QueryRow(
+		ctx, getCustomer, id,
 	)
-	return &i, err
+
+	var rtn models.Customer
+	err := row.Scan(
+		&rtn.ID, &rtn.Type, &rtn.Status,
+		&rtn.Login, &rtn.Password, &rtn.Identity,
+		&rtn.CreatedAt, &rtn.UpdatedAt, &rtn.Deleted,
+	)
+	return &rtn, err
 }
 
 func (r *customerPG) DeleteCustomer(ctx context.Context, id uuid.UUID) error {
-	_, err := r.db.Exec(ctx, deleteCustomer, id)
+	_, err := r.db.Exec(
+		ctx, deleteCustomer, id,
+	)
 	return err
 }
 
 func (r *customerPG) ListCustomers(ctx context.Context) (*models.CustomersList, error) {
-	rows, err := r.db.Query(ctx, listCustomers)
+	rows, err := r.db.Query(
+		ctx, listCustomers,
+	)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	customers := make([]*models.Customer, 0)
+
+	rtn := make([]*models.Customer, 0)
 	for rows.Next() {
-		var c models.Customer
+		var each models.Customer
 		if err := rows.Scan(
-			&c.ID,
-			&c.Type,
-			&c.Status,
-			&c.Login,
-			&c.Password,
-			&c.Identity,
-			&c.CreatedAt,
-			&c.UpdatedAt,
-			&c.Deleted,
+			&each.ID,
+			&each.Type,
+			&each.Status,
+			&each.Login,
+			&each.Password,
+			&each.Identity,
+			&each.CreatedAt,
+			&each.UpdatedAt,
+			&each.Deleted,
 		); err != nil {
 			return nil, err
 		}
-		customers = append(customers, &c)
+		rtn = append(rtn, &each)
 	}
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
-	return &models.CustomersList{Customers: customers}, nil
+	return &models.CustomersList{Customers: rtn}, nil
 }
 
 func (r *customerPG) UpdateCustomer(ctx context.Context, arg models.UpdateCustomerParams) (*models.Customer, error) {
-	row := r.db.QueryRow(ctx, updateCustomer, arg.ID, arg.Type, arg.Status, arg.Login, arg.Password, arg.Identity, arg.CreatedAt, arg.UpdatedAt, arg.Deleted)
-	var i models.Customer
-	err := row.Scan(
-		&i.ID,
-		&i.Type,
-		&i.Status,
-		&i.Login,
-		&i.Password,
-		&i.Identity,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.Deleted,
+	row := r.db.QueryRow(
+		ctx, updateCustomer, arg.ID, arg.Type, arg.Status, arg.Login,
+		arg.Password, arg.Identity, arg.CreatedAt, arg.UpdatedAt, arg.Deleted,
 	)
-	return &i, err
+	var rtn models.Customer
+	err := row.Scan(
+		&rtn.ID, &rtn.Type, &rtn.Status, &rtn.Login, &rtn.Password,
+		&rtn.Identity, &rtn.CreatedAt, &rtn.UpdatedAt, &rtn.Deleted,
+	)
+	return &rtn, err
 }

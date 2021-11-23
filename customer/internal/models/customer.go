@@ -8,27 +8,8 @@ import (
 	"github.com/google/uuid"
 
 	"github.com/rodkevich/ts/customer/pkg/types"
-	v1 "github.com/rodkevich/ts/customer/proto/v1"
+	v1 "github.com/rodkevich/ts/customer/proto/customer/v1"
 )
-
-type CreateCustomerParams struct {
-	Type     types.EnumCustomersType `json:"type,omitempty"`
-	Login    string                  `json:"login,omitempty"`
-	Password string                  `json:"password,omitempty"`
-	Identity *string                 `json:"identity"`
-}
-
-type UpdateCustomerParams struct {
-	ID        uuid.UUID                 `json:"id,omitempty"`
-	Type      types.EnumCustomersType   `json:"type,omitempty"`
-	Status    types.EnumCustomersStatus `json:"status,omitempty"`
-	Login     string                    `json:"login,omitempty"`
-	Password  string                    `json:"password,omitempty"`
-	Identity  *string                   `json:"identity"`
-	CreatedAt time.Time                 `json:"created_at"`
-	UpdatedAt time.Time                 `json:"updated_at"`
-	Deleted   bool                      `json:"deleted,omitempty"`
-}
 
 type Customer struct {
 	ID        uuid.UUID                 `json:"id,omitempty"`
@@ -67,10 +48,29 @@ type CustomersList struct {
 }
 
 // ToProto ..
-func (c *CustomersList) ToProto() []*v1.Customer {
-	customersList := make([]*v1.Customer, 0, len(c.Customers))
-	for _, customer := range c.Customers {
+func (cl *CustomersList) ToProto() []*v1.Customer {
+	customersList := make([]*v1.Customer, 0, len(cl.Customers))
+	for _, customer := range cl.Customers {
 		customersList = append(customersList, customer.ToProto())
 	}
 	return customersList
+}
+
+type CreateCustomerParams struct {
+	Type     types.EnumCustomersType `json:"type,omitempty"`
+	Login    string                  `json:"login,omitempty"`
+	Password string                  `json:"password,omitempty"`
+	Identity *string                 `json:"identity"`
+}
+
+type UpdateCustomerParams struct {
+	ID        uuid.UUID                 `json:"id,omitempty"`
+	Type      types.EnumCustomersType   `json:"type,omitempty"`
+	Status    types.EnumCustomersStatus `json:"status,omitempty"`
+	Login     string                    `json:"login,omitempty"`
+	Password  string                    `json:"password,omitempty"`
+	Identity  *string                   `json:"identity"`
+	CreatedAt time.Time                 `json:"created_at"`
+	UpdatedAt time.Time                 `json:"updated_at"`
+	Deleted   bool                      `json:"deleted,omitempty"`
 }

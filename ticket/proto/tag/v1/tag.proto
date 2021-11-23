@@ -1,18 +1,18 @@
 syntax = "proto3";
 
-package tag.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "proto/tag/v1";
+package tag.v1;
+option go_package = "ticket/proto/tag/v1";
 
 message Tag {
   string id = 1;
-  google.protobuf.Timestamp created_at = 2;
-  google.protobuf.Timestamp updated_at = 3;
-  google.protobuf.Timestamp deleted_at = 4;
-  string name = 5;
-  string description = 6;
+  string name = 2;
+  string description = 3;
+  google.protobuf.Timestamp created_at = 4;
+  google.protobuf.Timestamp updated_at = 5;
+  bool deleted = 6;
 }
 
 service TagService {
@@ -23,7 +23,6 @@ service TagService {
 message CreateTagRequest {
   string id = 1;
   string name = 2;
-  string commit_name = 3;
 }
 
 message CreateTagResponse {

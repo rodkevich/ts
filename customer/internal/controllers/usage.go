@@ -9,11 +9,11 @@ import (
 )
 
 type controller struct {
-	customerPGRepo customer.Proprietor
+	customerPGRepo customer.ProprietorCustomers
 	logger         logger.Logger
 }
 
-func NewCustomerController(log logger.Logger, customerRepo customer.Proprietor) *controller {
+func NewCustomerController(log logger.Logger, customerRepo customer.ProprietorCustomers) *controller {
 	return &controller{customerPGRepo: customerRepo, logger: log}
 }
 

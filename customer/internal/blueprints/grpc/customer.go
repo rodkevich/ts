@@ -12,7 +12,7 @@ import (
 	"github.com/rodkevich/ts/customer/internal/models"
 	"github.com/rodkevich/ts/customer/pkg/logger"
 	"github.com/rodkevich/ts/customer/pkg/types"
-	v1 "github.com/rodkevich/ts/customer/proto/v1"
+	"github.com/rodkevich/ts/customer/proto/customer/v1"
 )
 
 type CustomerGrpcService struct {
@@ -37,7 +37,7 @@ func (s *CustomerGrpcService) ListCustomers(ctx context.Context, request *v1.Lis
 
 func (s *CustomerGrpcService) CreateCustomer(ctx context.Context, r *v1.CreateCustomerRequest) (*v1.CreateCustomerResponse, error) {
 	// TODO: check passwd
-	res := models.Customer{
+	req := models.Customer{
 		ID:        uuid.MustParse(r.Customer.GetId()),
 		Type:      types.EnumCustomersType(r.Customer.GetType()),
 		Status:    types.EnumCustomersStatus(r.Customer.GetStatus()),
@@ -49,12 +49,12 @@ func (s *CustomerGrpcService) CreateCustomer(ctx context.Context, r *v1.CreateCu
 		Deleted:   false,
 	}
 
-	customer, err := s.useSchema.CreateCustomer(ctx, &res)
+	useResp, err := s.useSchema.CreateCustomer(ctx, &req)
 	if err != nil {
 		s.logger.Errorf("useSchema.CreateCustomer: %v", err)
 		return nil, status.Errorf(codes.AlreadyExists, fmt.Sprintf("%s: %v", "CustomerService.CreateCustomer:", err))
 	}
-	resp := v1.CreateCustomerResponse{Customer: customer.ToProto()}
+	resp := v1.CreateCustomerResponse{Customer: useResp.ToProto()}
 	return &resp, nil
 }
 

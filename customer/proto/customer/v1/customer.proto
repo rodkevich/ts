@@ -1,10 +1,10 @@
 syntax = "proto3";
 
-package customer.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "customer/proto/v1";
+package customer.v1;
+option go_package = "customer/proto/customer/v1";
 
 message Customer {
   string id = 1;
@@ -20,7 +20,6 @@ message Customer {
 
 service CustomerService {
   rpc CreateCustomer (CreateCustomerRequest) returns (CreateCustomerResponse);
-  rpc GetCustomer (ListCustomersRequest) returns (ListCustomersResponse);
   rpc ListCustomers (ListCustomersRequest) returns (ListCustomersResponse);
   rpc UpdateCustomer (UpdateCustomerRequest) returns (ListCustomersResponse);
   rpc DeleteCustomer (DeleteCustomerRequest) returns (DeleteCustomerResponse);

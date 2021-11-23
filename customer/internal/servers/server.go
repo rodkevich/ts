@@ -3,6 +3,7 @@ package servers
 import (
 	"context"
 	"encoding/json"
+	pb "github.com/rodkevich/ts/customer/proto/customer/v1"
 	"log"
 	"net"
 	"net/http"
@@ -30,7 +31,6 @@ import (
 	"github.com/rodkevich/ts/customer/internal/controllers"
 	"github.com/rodkevich/ts/customer/internal/repositories/postgres"
 	"github.com/rodkevich/ts/customer/pkg/logger"
-	pb "github.com/rodkevich/ts/customer/proto/v1"
 )
 
 const (
@@ -155,7 +155,6 @@ func (s *Server) Run() error {
 		}
 
 		serverGRPC.GracefulStop()
-		time.Sleep(3 * time.Second)
 		serverStopCancel()
 
 		s.logger.Info("Server Exited Properly")

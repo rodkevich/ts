@@ -18,7 +18,7 @@ $$ language 'plpgsql';
 
 --- TABLES ---------------------------------------------------------------------
 
---- tickets -------------------------------------------------------------------------
+--- tickets --------------------------------------------------------------------
 CREATE TYPE enum_tickets_priority AS ENUM
     ('Draft','Regular','Premium', 'Promoted');
 
@@ -26,7 +26,7 @@ CREATE table if not exists tickets
 (
     id          uuid                  not null default gen_random_uuid(),
     owner_id    uuid                  not null,
-    name        citext                not null CHECK ( name <> '' ),
+    name_short  citext                not null CHECK ( name_short <> '' ),
     name_ext    citext,
     description text,
     amount      integer               not null default 1::integer,
@@ -34,6 +34,7 @@ CREATE table if not exists tickets
     currency    integer               not null,
     priority    enum_tickets_priority not null default 'Draft'::enum_tickets_priority,
     published   bool                  not null default false,
+    active      bool                  not null default false,
     created_at  timestamptz           not null default now(),
     updated_at  timestamptz           not null default now(),
     deleted     bool                  not null default false,
@@ -41,7 +42,7 @@ CREATE table if not exists tickets
     PRIMARY KEY (id)
 );
 
-CREATE trigger tickets_touch_updated_at
+CREATE trigger tickets_touch_updated_at_trigger
     before update
     on tickets
     FOR EACH ROW
