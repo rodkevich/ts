@@ -6,6 +6,8 @@ services:
   postgres-customer:
     image: postgres:latest
     container_name: postgres-customer
+    volumes:
+      - ./customer/migrations/ddl.init.sql:/docker-entrypoint-initdb.d/init.sql
     env_file:
       - build/docker/customer/dev.customer.database.env
     ports:
@@ -16,9 +18,12 @@ services:
     container_name: postgres-ticket
     env_file:
       - build/docker/ticket/dev.ticket.database.env
+    volumes:
+      - ./ticket/migrations/ddl.init.sql:/docker-entrypoint-initdb.d/init.sql
     ports:
       - "5556:5432/tcp"
 
-#  docker run -it -p 27017:27017 --name mongo mongo:4 mongo
+
+# docker run -it -p 27017:27017 --name mongo mongo:4 mongo
 # MONGO_URI=mongodb://127.0.0.1:27217/bpm ./cbpm-backend
 # docker run -p 27217:27017 --name dev-mongo -v -d mongo
