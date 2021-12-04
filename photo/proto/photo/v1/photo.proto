@@ -10,7 +10,8 @@ option go_package = "photo/proto/photo/v1";
 service PhotoService {
   rpc CreatePhoto(CreatePhotoRequest) returns (CreatePhotoResponse);
   rpc ListPhotos(ListPhotosRequest) returns (ListPhotosResponse);
-}
+};
+
 message Photo{
   string id = 1;
   string type = 2;
@@ -33,7 +34,7 @@ message CreatePhotoRequest{
 message CreatePhotoResponse{
   bool created = 1;
   Photo photo = 2;
-}
+};
 
 message ListPhotosRequest{
   string id = 1;
@@ -45,4 +46,4 @@ message ListPhotosRequest{
 message ListPhotosResponse {
   repeated Photo photos = 1;
   string next_page_token = 2;
-}
+};
