@@ -16,7 +16,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 // PhotoServiceClient is the client API for PhotoService service.
 //
-// For semantics around ctx usage and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PhotoServiceClient interface {
 	CreatePhoto(ctx context.Context, in *CreatePhotoRequest, opts ...grpc.CallOption) (*CreatePhotoResponse, error)
 	ListPhotos(ctx context.Context, in *ListPhotosRequest, opts ...grpc.CallOption) (*ListPhotosResponse, error)
@@ -117,7 +117,7 @@ func _PhotoService_ListPhotos_Handler(srv interface{}, ctx context.Context, dec 
 }
 
 // PhotoService_ServiceDesc is the grpc.ServiceDesc for PhotoService service.
-// It's only intended for direct usage with grpc.RegisterService,
+// It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var PhotoService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "photo.v1.PhotoService",
@@ -133,5 +133,5 @@ var PhotoService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "photo/v1/photo.proto",
+	Metadata: "photo/proto/photo/v1/photo.proto",
 }
