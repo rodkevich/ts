@@ -28,8 +28,9 @@ func (p *photoPG) CreatePhoto(ctx context.Context, arg models.CreatePhotoParams)
 	`
 	row := p.db.QueryRow(
 		ctx, createPhoto,
-		arg.Type, arg.SizeKb, arg.UploadName,
-		arg.Description, arg.ImageUrl, arg.OwnerID,
+		arg.Type, arg.SizeKb,
+		arg.UploadName, arg.Description,
+		arg.ImageUrl, arg.OwnerID,
 	)
 
 	var i models.Photo
@@ -38,6 +39,7 @@ func (p *photoPG) CreatePhoto(ctx context.Context, arg models.CreatePhotoParams)
 		&i.ImageUrl, &i.Description, &i.OwnerID,
 		&i.CreatedAt, &i.UpdatedAt, &i.Deleted,
 	)
+
 	return &i, err
 }
 
@@ -57,6 +59,7 @@ func (p *photoPG) GetPhoto(ctx context.Context, id uuid.UUID) (*models.Photo, er
 		&i.ImageUrl, &i.Description, &i.OwnerID,
 		&i.CreatedAt, &i.UpdatedAt, &i.Deleted,
 	)
+
 	return &i, err
 }
 
@@ -84,9 +87,11 @@ func (p *photoPG) ListPhotos(ctx context.Context) (*models.PhotoList, error) {
 		}
 		rtn = append(rtn, &each)
 	}
+
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
+
 	return &models.PhotoList{Photos: rtn}, nil
 }
 
