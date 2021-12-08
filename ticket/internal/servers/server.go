@@ -2,7 +2,6 @@ package servers
 
 import (
 	"context"
-	"encoding/json"
 	"log"
 	"net"
 	"net/http"
@@ -16,8 +15,6 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
-
 	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 
@@ -25,10 +22,11 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 
 	"github.com/rodkevich/ts/ticket/config"
-	handlers "github.com/rodkevich/ts/ticket/internal/blueprints/grpc"
-	"github.com/rodkevich/ts/ticket/internal/controllers"
-	"github.com/rodkevich/ts/ticket/internal/repositories/postgres"
+	handlers "github.com/rodkevich/ts/ticket/internal/ticket/blueprints/grpc"
+	"github.com/rodkevich/ts/ticket/internal/ticket/controllers"
+	"github.com/rodkevich/ts/ticket/internal/ticket/repositories/postgres"
 	"github.com/rodkevich/ts/ticket/pkg/logger"
+
 	pb "github.com/rodkevich/ts/ticket/proto/ticket/v1"
 )
 
@@ -49,12 +47,13 @@ type Server struct {
 }
 
 // NewServer ...
-func NewServer(
-	logger logger.Logger,
-	cfg *config.Config,
-	pgxPool *pgxpool.Pool,
-) *Server {
-	return &Server{logger: logger, cfg: cfg, pgConnection: pgxPool, chi: chi.NewMux()}
+func NewServer(logger logger.Logger, cfg *config.Config, pgxPool *pgxpool.Pool) *Server {
+	return &Server{
+		logger:       logger,
+		cfg:          cfg,
+		pgConnection: pgxPool,
+		chi:          chi.NewMux(),
+	}
 }
 
 func (s *Server) Run() error {
@@ -108,37 +107,22 @@ func (s *Server) Run() error {
 	}
 
 	// Http //
-	s.chi.Route("/ping", func(r chi.Router) {
-		s.logger.Info("sub-router ping: enabled")
-		r.Use(middleware.RequestID)
-		r.Use(middleware.Logger)
-		r.Use(middleware.RealIP)
-		r.Use(middleware.Recoverer)
-		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("pong"))
-		})
-		r.Get("/config", func(w http.ResponseWriter, r *http.Request) {
-			cfg, err := json.Marshal(s.cfg)
-			if err != nil {
-				s.logger.Errorf("Unable to parse config: %v", err)
-			}
-			w.Write(cfg)
-		})
-	})
+	s.initHTTPPingRouter()
+
 	serverHTTP := http.Server{
-		Addr:           "0.0.0.0:3333",
+		Addr:           "0.0.0.0:3334",
 		Handler:        s.chi,
 		MaxHeaderBytes: maxHeaderBytes,
 	}
 
-	// Listen for syscall signals for process to interrupt/quit
 	serverCtx, serverStopCancel := context.WithCancel(context.Background())
+
 	sig := make(chan os.Signal, 1)
 	signal.Notify(sig, syscall.SIGHUP, syscall.SIGINT, syscall.SIGTERM, syscall.SIGQUIT)
 
 	go func() {
 		<-sig
-		// Shutdown signal with grace period of 30 seconds
+		// Shutdown signal with grace period
 		shutdownCtx, _ := context.WithTimeout(serverCtx, 2*time.Second)
 
 		go func() {

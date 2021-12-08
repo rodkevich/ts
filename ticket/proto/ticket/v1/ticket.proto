@@ -6,6 +6,13 @@ import "google/protobuf/timestamp.proto";
 package ticket.v1;
 option go_package = "ticket/proto/ticket/v1";
 
+service TicketService {
+  rpc CreateTicket (CreateTicketRequest) returns (CreateTicketResponse);
+  rpc ListTickets (ListTicketsRequest) returns (ListTicketsResponse);
+  rpc UpdateTicket (UpdateTicketRequest) returns (ListTicketsResponse);
+  rpc DeleteTicket (DeleteTicketRequest) returns (DeleteTicketResponse);
+}
+
 message Ticket {
   string id = 1;
   string owner_id = 2;
@@ -21,13 +28,6 @@ message Ticket {
   google.protobuf.Timestamp created_at = 13;
   google.protobuf.Timestamp updated_at = 14;
   bool deleted = 15;
-}
-
-service TicketService {
-  rpc CreateTicket (CreateTicketRequest) returns (CreateTicketResponse);
-  rpc ListTickets (ListTicketsRequest) returns (ListTicketsResponse);
-  rpc UpdateTicket (UpdateTicketRequest) returns (ListTicketsResponse);
-  rpc DeleteTicket (DeleteTicketRequest) returns (DeleteTicketResponse);
 }
 
 message CreateTicketRequest {

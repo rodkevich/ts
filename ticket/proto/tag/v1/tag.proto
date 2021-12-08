@@ -6,6 +6,11 @@ import "google/protobuf/timestamp.proto";
 package tag.v1;
 option go_package = "ticket/proto/tag/v1";
 
+service TagService {
+  rpc CreateTag(CreateTagRequest) returns (CreateTagResponse);
+  rpc ListTags(ListTagsRequest) returns (ListTagsResponse);
+}
+
 message Tag {
   string id = 1;
   string name = 2;
@@ -15,14 +20,11 @@ message Tag {
   bool deleted = 6;
 }
 
-service TagService {
-  rpc CreateTag(CreateTagRequest) returns (CreateTagResponse);
-  rpc ListTags(ListTagsRequest) returns (ListTagsResponse);
-}
 
 message CreateTagRequest {
   string id = 1;
   string name = 2;
+  string description = 3;
 }
 
 message CreateTagResponse {

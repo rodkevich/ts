@@ -8,7 +8,10 @@ import (
 	"github.com/rodkevich/ts/ticket/internal/models"
 )
 
-type ProprietorTickets interface {
+// TODO: https://jsonapi.org/format/#fetching-sparse-fieldsets
+// GET /articles?include=author&fields[articles]=title,body&fields[people]=name
+
+type TicketsProprietor interface {
 	CreateTicket(ctx context.Context, arg models.CreateTicketParams) (*models.Ticket, error)
 	GetTicket(ctx context.Context, id uuid.UUID) (*models.Ticket, error)
 	ListTickets(ctx context.Context) (*models.TicketsList, error)
@@ -19,10 +22,4 @@ type ProprietorTickets interface {
 	ChangeTicketDeletedState(ctx context.Context, deleted bool, id uuid.UUID) (*models.Ticket, error)
 
 	DeleteTicket(ctx context.Context, id uuid.UUID) error
-
-	CreateTag()
-	GetTag()
-	ListTags()
-	UpdateTag()
-	DeleteTag()
 }

@@ -1,6 +1,8 @@
 -- v0.1.0
 
 DROP TABLE if exists tickets CASCADE;
+DROP TABLE if exists tags CASCADE;
+DROP TABLE if exists ticket_tags CASCADE;
 
 -- EXTENSIONS ------------------------------------------------------------------
 CREATE EXTENSION if not exists "pgcrypto";
@@ -38,7 +40,6 @@ CREATE table if not exists tickets
     created_at  timestamptz           not null default now(),
     updated_at  timestamptz           not null default now(),
     deleted     bool                  not null default false,
-
     PRIMARY KEY (id)
 );
 
@@ -47,4 +48,52 @@ CREATE trigger tickets_touch_updated_at_trigger
     on tickets
     FOR EACH ROW
 EXECUTE procedure touch_updated_at();
+
+
+--- tags -----------------------------------------------------------------------
+CREATE table if not exists tags
+(
+    id          uuid        not null default gen_random_uuid(),
+    name        citext      not null,
+    description citext      null,
+    created_at  timestamptz not null default now(),
+    updated_at  timestamptz not null default now(),
+    deleted     bool        not null default false,
+    PRIMARY KEY (id)
+);
+
+CREATE trigger tags_touch_updated_at
+    before update
+    on tags
+    FOR EACH ROW
+EXECUTE procedure touch_updated_at();
+
+
+--- ticket_tags ----------------------------------------------------------------
+CREATE table if not exists ticket_tags
+(
+    ticket_id  uuid        not null,
+    tag_id     uuid        not null,
+    created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now(),
+
+    PRIMARY KEY (tag_id, ticket_id),
+
+    CONSTRAINT fk_ticket_tags_tag_id
+        foreign key (tag_id)
+            references tags (id)
+            ON DELETE CASCADE,
+
+    CONSTRAINT fk_ticket_tags_ticket_id
+        foreign key (ticket_id)
+            references tickets (id)
+            ON DELETE CASCADE
+);
+
+CREATE trigger ticket_tags_touch_updated_at
+    before update
+    on ticket_tags
+    FOR EACH ROW
+EXECUTE procedure touch_updated_at();
+
 --------------------------------------------------------------------------------

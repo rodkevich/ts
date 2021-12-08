@@ -16,6 +16,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Loading config: %v", err)
 	}
+
 	// logger
 	appLogger := logger.New(cfg)
 	appLogger.InitLogger()
