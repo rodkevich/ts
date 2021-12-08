@@ -4,55 +4,51 @@ package profile.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "proto/profile/v1";
+option go_package = "profile/proto/profile/v1";
 
-message Profile {
-  string id = 1;
-  google.protobuf.Timestamp createdAt = 2;
-  google.protobuf.Timestamp updatedAt = 3;
-  google.protobuf.Timestamp deletedAt = 4;
-  string type = 5;
-  string profile_id = 6;
-  string service_name = 7;
-  string nickname = 8;
-  string first_name = 9;
-  string last_name = 10;
-  string email = 11;
-  string mobile = 12;
-  string phone = 13;
-  string avatar_url = 14;
-  int64 time_zone = 15;
-  bool active = 16;
-}
-
-// SERVICE
 service ProfileService {
   rpc CreateProfile (CreateProfileRequest) returns (CreateProfileResponse);
-  rpc ListProfile (ListProfileRequest) returns (ListProfileResponse);
-  rpc UpdateProfile (UpdateProfileRequest) returns (ListProfileResponse);
+  rpc ListProfile (ListProfilesRequest) returns (ListProfilesResponse);
+  rpc UpdateProfile (UpdateProfileRequest) returns (ListProfilesResponse);
   rpc DeleteProfile (DeleteProfileRequest) returns (DeleteProfileResponse);
 }
 
+message Profile {
+  string id = 1;
+  string service_name = 2;
+  string type = 3;
+  string nickname = 4;
+  string first_name = 5;
+  string last_name = 6;
+  string email = 7;
+  string mobile = 8;
+  string phone = 9;
+  string avatar_url = 10;
+  int64 time_zone = 11;
+  google.protobuf.Timestamp createdAt = 12;
+  google.protobuf.Timestamp updatedAt = 13;
+  bool deleted = 14;
+}
+
 message CreateProfileRequest {
+  string service_name = 1;
   string type = 2;
-  string profile_id = 3;
-  string service_name = 4;
-  string nickname = 5;
-  string first_name = 6;
-  string last_name = 7;
-  string email = 8;
-  string mobile = 9;
-  string phone = 10;
-  string avatar_url = 11;
-  int64 time_zone = 12;
+  string nickname = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string email = 6;
+  string mobile = 7;
+  string phone = 8;
+  string avatar_url = 9;
+  int64 time_zone = 10;
 }
 
 message CreateProfileResponse {
-  string token = 1;
+  Profile profile = 1;
 }
 
-message ListProfileRequest {
-  string _id = 1;
+message ListProfilesRequest {
+  string id = 1;
 }
 
 message UpdateProfileRequest {
@@ -60,12 +56,12 @@ message UpdateProfileRequest {
   string next_page_token = 2;
 }
 
-message ListProfileResponse {
+message ListProfilesResponse {
   Profile profile = 1;
 }
 
 message DeleteProfileRequest {
-  string _id = 1;
+  string id = 1;
 }
 
 message DeleteProfileResponse {}
