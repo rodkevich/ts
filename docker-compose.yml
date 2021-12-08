@@ -3,7 +3,7 @@ version: '3'
 
 services:
 
-  postgres-customer:
+  postgres-customer: &customer_db
     image: postgres:latest
     container_name: postgres-customer
     volumes:
@@ -23,7 +23,24 @@ services:
     ports:
       - "5556:5432/tcp"
 
+  postgres-photo:
+    image: postgres:latest
+    container_name: postgres-photo
+    env_file:
+      - build/docker/photo/dev.photo.database.env
+    volumes:
+      - ./photo/migrations/ddl.init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5557:5432/tcp"
 
+
+#  postgres-test:
+#    <<: *customer_db
+#    container_name: postgres-test
+#    ports:
+#      - "5557:5432/tcp"
+
+# docker-compose up --scale postgres-customer=2
 # docker run -it -p 27017:27017 --name mongo mongo:4 mongo
 # MONGO_URI=mongodb://127.0.0.1:27217/bpm ./cbpm-backend
 # docker run -p 27217:27017 --name dev-mongo -v -d mongo

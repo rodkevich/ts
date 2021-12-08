@@ -13,7 +13,7 @@ gen-customer:
 	--go_out=. \
 	--go-grpc_out=. \
 	--grpc-gateway_out=. \
-	customer/proto/v1/customer.proto
+	customer/proto/customer/v1/customer.proto
 
 
 gen-photo:
@@ -67,7 +67,7 @@ linter:
 	cd ..
 	cd photo && golangci-lint run ./...
 	cd ..
-	cd server && golangci-lint run ./...
+	cd ticket && golangci-lint run ./...
 	cd ..
 	cd profile && golangci-lint run ./...
 
