@@ -33,7 +33,7 @@ logger:
 
 postgres:
   PostgresqlHost: localhost
-  PostgresqlPort: 5433
+  PostgresqlPort: 5556
   PostgresqlUser: postgres
   PostgresqlPassword: postgres
   PostgresqlDbname: postgres

@@ -28,6 +28,7 @@ func main() {
 		cfg.GRPCServer.Mode,
 	)
 	appLogger.Infof("Success parsed config: %#v", cfg.GRPCServer.AppVersion)
+
 	// database
 	pgxConn, err := postgres.NewPgxConn(cfg)
 	if err != nil {
@@ -36,6 +37,7 @@ func main() {
 	defer pgxConn.Close()
 
 	appLogger.Infof("%-v", pgxConn.Config().ConnString())
+
 	// server
 	s := servers.NewServer(appLogger, cfg, pgxConn)
 	appLogger.Fatal(" server stopped running: ERRORS: ", s.Run())

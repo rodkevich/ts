@@ -6,43 +6,52 @@ import (
 	"github.com/rodkevich/ts/ticket"
 	"github.com/rodkevich/ts/ticket/internal/models"
 	"github.com/rodkevich/ts/ticket/pkg/logger"
-	ticket_service_v1 "github.com/rodkevich/ts/ticket/proto/ticket/v1"
+	"github.com/rodkevich/ts/ticket/pkg/types"
+	"github.com/rodkevich/ts/ticket/proto/ticket/v1"
 )
 
 type TicketGrpcService struct {
-	ticket_service_v1.UnimplementedTicketServiceServer
+	v1.UnimplementedTicketServiceServer
 
 	logger      logger.Logger
-	ticketUsage ticket.TicketsInvoker
-	tagUsage    ticket.TagsInvoker
+	ticketUsage ticket.TicketsController
+	tagUsage    ticket.TagController
+	//ticketTagUsage ticket.TicketTagsController
 }
 
-func (t TicketGrpcService) CreateTag(ctx context.Context, tag *models.Tag) (*models.Tag, error) {
-	// TODO implement me
+func (tgs TicketGrpcService) CreateTicket(ctx context.Context, request *v1.CreateTicketRequest) (*v1.CreateTicketResponse, error) {
+	createTicketUsageResp, err := tgs.ticketUsage.CreateTicket(ctx, &models.Ticket{
+		OwnerID:     uuid.MustParse(request.GetOwnerId()),
+		NameShort:   request.GetNameShort(),
+		NameExt:     &request.NameExt,
+		Description: &request.Description,
+		Amount:      request.GetAmount(),
+		Price:       request.GetPrice(),
+		Currency:    request.GetCurrency(),
+		Priority:    types.EnumTicketsPriority(request.GetPriority()),
+		Published:   request.GetPublished(),
+	})
+	if err != nil {
+		tgs.logger.Errorf("ticketUsage.CreateTicket: %v", err)
+		return nil, err
+	}
+
+	return &v1.CreateTicketResponse{Ticket: createTicketUsageResp.ToProto()}, nil
+}
+
+func (tgs TicketGrpcService) ListTickets(ctx context.Context, request *v1.ListTicketsRequest) (*v1.ListTicketsResponse, error) {
 	panic("implement me")
 }
 
-func (t TicketGrpcService) GetTag(ctx context.Context, uuid uuid.UUID) (*models.Tag, error) {
-	// TODO implement me
+func (tgs TicketGrpcService) UpdateTicket(ctx context.Context, request *v1.UpdateTicketRequest) (*v1.ListTicketsResponse, error) {
 	panic("implement me")
 }
 
-func (t TicketGrpcService) ListTags(ctx context.Context, tag *models.Tag) (*models.TagList, error) {
-	// TODO implement me
+func (tgs TicketGrpcService) DeleteTicket(ctx context.Context, request *v1.DeleteTicketRequest) (*v1.DeleteTicketResponse, error) {
 	panic("implement me")
 }
 
-func (t TicketGrpcService) UpdateTag(ctx context.Context, uuid uuid.UUID) (*models.Tag, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func (t TicketGrpcService) DeleteTag(ctx context.Context, tag *models.Tag) (*models.Tag, error) {
-	// TODO implement me
-	panic("implement me")
-}
-
-func NewTicketGrpcService(logger logger.Logger, useSchema ticket.TicketsInvoker) *TicketGrpcService {
+func New(logger logger.Logger, useSchema ticket.TicketsController) *TicketGrpcService {
 	return &TicketGrpcService{logger: logger, ticketUsage: useSchema}
 }
 

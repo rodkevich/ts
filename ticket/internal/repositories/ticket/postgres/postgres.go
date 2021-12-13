@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v4/pgxpool"
 
@@ -13,24 +12,29 @@ type ticketPG struct {
 	db *pgxpool.Pool
 }
 
-func NewTicketPG(db *pgxpool.Pool) *ticketPG {
+func New(db *pgxpool.Pool) *ticketPG {
 	return &ticketPG{db: db}
 }
 
-func (tpg *ticketPG) CreateTicket(ctx context.Context, arg models.CreateTicketParams) (*models.Ticket, error) {
+func (tpg *ticketPG) CreateTicket(ctx context.Context, arg *models.Ticket) (*models.Ticket, error) {
+	//fmt.Printf("%+v\n", arg)
 	const createTicket = `
 	INSERT INTO tickets
-	(owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active)
+	(owner_id, name_short, name_ext, description, amount, 
+	price, currency, priority, published, active)
 	VALUES
 	($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
 	RETURNING
-	id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted
+	id, owner_id, name_short, name_ext, description, 
+	amount, price, currency, priority, published, 
+	active, created_at, updated_at, deleted
 	`
 	row := tpg.db.QueryRow(
 		ctx, createTicket,
 		arg.OwnerID, arg.NameShort, arg.NameExt,
 		arg.Description, arg.Amount, arg.Price,
 		arg.Currency, arg.Priority, arg.Published,
+		arg.Active,
 	)
 	var rtn models.Ticket
 	err := row.Scan(
@@ -62,7 +66,7 @@ func (tpg *ticketPG) GetTicket(ctx context.Context, id uuid.UUID) (*models.Ticke
 	return &rtn, err
 }
 
-func (tpg *ticketPG) ListTickets(ctx context.Context) (*models.TicketsList, error) {
+func (tpg *ticketPG) ListTickets(ctx context.Context, f *models.Filter) (*models.TicketsList, error) {
 	const listTickets = `
 	SELECT
 	id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted
@@ -94,6 +98,7 @@ func (tpg *ticketPG) ListTickets(ctx context.Context) (*models.TicketsList, erro
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
+
 	return &models.TicketsList{Tickets: rtn}, nil
 }
 

@@ -2,6 +2,7 @@ package servers
 
 import (
 	"context"
+	"github.com/rodkevich/ts/ticket/internal/controllers"
 	"log"
 	"net"
 	"net/http"
@@ -15,16 +16,16 @@ import (
 	"google.golang.org/grpc/reflection"
 
 	"github.com/go-chi/chi/v5"
-	grpcrecovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
+	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v4/pgxpool"
 
-	"github.com/rodkevich/ts/ticket/config"
-	handlers "github.com/rodkevich/ts/ticket/internal/ticket/blueprints/grpc"
-	"github.com/rodkevich/ts/ticket/internal/ticket/controllers"
-	"github.com/rodkevich/ts/ticket/internal/ticket/repositories/postgres"
+	cfg "github.com/rodkevich/ts/ticket/config"
+
+	ticketGRPCService "github.com/rodkevich/ts/ticket/internal/buleprints/ticket/grpc"
+	ticketPGRepo "github.com/rodkevich/ts/ticket/internal/repositories/ticket/postgres"
 	"github.com/rodkevich/ts/ticket/pkg/logger"
 
 	pb "github.com/rodkevich/ts/ticket/proto/ticket/v1"
@@ -42,12 +43,12 @@ const (
 type Server struct {
 	chi          *chi.Mux
 	logger       logger.Logger
-	cfg          *config.Config
+	cfg          *cfg.Config
 	pgConnection *pgxpool.Pool
 }
 
 // NewServer ...
-func NewServer(logger logger.Logger, cfg *config.Config, pgxPool *pgxpool.Pool) *Server {
+func NewServer(logger logger.Logger, cfg *cfg.Config, pgxPool *pgxpool.Pool) *Server {
 	return &Server{
 		logger:       logger,
 		cfg:          cfg,
@@ -84,14 +85,14 @@ func (s *Server) Run() error {
 	}),
 		grpc.ChainUnaryInterceptor(
 			grpc_ctxtags.UnaryServerInterceptor(),
-			grpcrecovery.UnaryServerInterceptor(),
+			grpc_recovery.UnaryServerInterceptor(),
 			// pls.logger,
 		),
 	)
 
-	ticketDB := postgres.NewTicketPG(s.pgConnection)
-	ticketController := controllers.NewTicketController(s.logger, ticketDB)
-	ticketService := handlers.NewTicketGrpcService(s.logger, ticketController)
+	ticketDB := ticketPGRepo.New(s.pgConnection)
+	ticketController := controllers.New(s.logger, ticketDB)
+	ticketService := ticketGRPCService.New(s.logger, ticketController)
 	pb.RegisterTicketServiceServer(serverGRPC, ticketService)
 
 	go func() {

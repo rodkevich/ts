@@ -20,11 +20,9 @@ message Tag {
   bool deleted = 6;
 }
 
-
 message CreateTagRequest {
-  string id = 1;
-  string name = 2;
-  string description = 3;
+  string name = 1;
+  string description = 2;
 }
 
 message CreateTagResponse {

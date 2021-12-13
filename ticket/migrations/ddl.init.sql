@@ -36,7 +36,7 @@ CREATE table if not exists tickets
     currency    integer               not null,
     priority    enum_tickets_priority not null default 'Draft'::enum_tickets_priority,
     published   bool                  not null default false,
-    active      bool                  not null default false,
+    active      bool                  not null default true,
     created_at  timestamptz           not null default now(),
     updated_at  timestamptz           not null default now(),
     deleted     bool                  not null default false,

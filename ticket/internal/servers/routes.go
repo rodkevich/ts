@@ -23,6 +23,7 @@ func (s *Server) initHTTPPingRouter() chi.Router {
 			if err != nil {
 				s.logger.Errorf("Unable to parse config: %v", err)
 			}
+
 			w.Write(cfg)
 		})
 	})
