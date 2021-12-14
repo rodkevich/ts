@@ -12,7 +12,9 @@ import (
 
 type TicketsProprietor interface {
 	CreateTicket(ctx context.Context, arg *models.Ticket) (*models.Ticket, error)
+
 	GetTicket(ctx context.Context, id uuid.UUID) (*models.Ticket, error)
+
 	ListTickets(ctx context.Context, f *models.Filter) (*models.TicketsList, error)
 	UpdateTicket(ctx context.Context, arg models.UpdateTicketParams, id uuid.UUID) (*models.Ticket, error)
 

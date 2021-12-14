@@ -48,7 +48,9 @@ func (tpg *ticketPG) CreateTicket(ctx context.Context, arg *models.Ticket) (*mod
 func (tpg *ticketPG) GetTicket(ctx context.Context, id uuid.UUID) (*models.Ticket, error) {
 	const getTicket = `
 	SELECT
-	id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted
+	id, owner_id, name_short, name_ext, description, 
+	amount, price, currency, priority, published, 
+	active, created_at, updated_at, deleted
 	FROM tickets
 	WHERE id = $1
 	LIMIT 1
