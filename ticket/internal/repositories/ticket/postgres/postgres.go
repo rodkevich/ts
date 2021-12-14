@@ -21,9 +21,9 @@ func (tpg *ticketPG) CreateTicket(ctx context.Context, arg *models.Ticket) (*mod
 	const createTicket = `
 	INSERT INTO tickets
 	(owner_id, name_short, name_ext, description, amount, 
-	price, currency, priority, published, active)
+	price, currency, priority, published)
 	VALUES
-	($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+	($1, $2, $3, $4, $5, $6, $7, $8, $9)
 	RETURNING
 	id, owner_id, name_short, name_ext, description, 
 	amount, price, currency, priority, published, 
@@ -34,7 +34,6 @@ func (tpg *ticketPG) CreateTicket(ctx context.Context, arg *models.Ticket) (*mod
 		arg.OwnerID, arg.NameShort, arg.NameExt,
 		arg.Description, arg.Amount, arg.Price,
 		arg.Currency, arg.Priority, arg.Published,
-		arg.Active,
 	)
 	var rtn models.Ticket
 	err := row.Scan(

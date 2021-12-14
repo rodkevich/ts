@@ -28,18 +28,6 @@ type (
 		Deleted     bool
 	}
 
-	CreateTicketParams struct {
-		OwnerID     uuid.UUID
-		NameShort   string
-		NameExt     *string
-		Description *string
-		Amount      int32
-		Price       float64
-		Currency    int32
-		Priority    types.EnumTicketsPriority
-		Published   bool
-	}
-
 	UpdateTicketParams struct {
 		OwnerID     uuid.UUID
 		NameShort   string

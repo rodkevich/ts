@@ -10,7 +10,7 @@ import (
 	"github.com/rodkevich/ts/ticket/proto/ticket/v1"
 )
 
-type TicketGrpcService struct {
+type ticketGrpcService struct {
 	v1.UnimplementedTicketServiceServer
 
 	logger      logger.Logger
@@ -19,7 +19,15 @@ type TicketGrpcService struct {
 	//ticketTagUsage ticket.TicketTagsController
 }
 
-func (tgs TicketGrpcService) CreateTicket(ctx context.Context, request *v1.CreateTicketRequest) (*v1.CreateTicketResponse, error) {
+func New(logger logger.Logger, useSchema ticket.TicketsController) *ticketGrpcService {
+	return &ticketGrpcService{
+		logger:      logger,
+		ticketUsage: useSchema,
+	}
+}
+
+func (tgs ticketGrpcService) CreateTicket(ctx context.Context, request *v1.CreateTicketRequest) (*v1.CreateTicketResponse, error) {
+	// parse grpc struct to known model
 	createTicketUsageResp, err := tgs.ticketUsage.CreateTicket(ctx, &models.Ticket{
 		OwnerID:     uuid.MustParse(request.GetOwnerId()),
 		NameShort:   request.GetNameShort(),
@@ -39,23 +47,19 @@ func (tgs TicketGrpcService) CreateTicket(ctx context.Context, request *v1.Creat
 	return &v1.CreateTicketResponse{Ticket: createTicketUsageResp.ToProto()}, nil
 }
 
-func (tgs TicketGrpcService) ListTickets(ctx context.Context, request *v1.ListTicketsRequest) (*v1.ListTicketsResponse, error) {
+func (tgs ticketGrpcService) ListTickets(ctx context.Context, request *v1.ListTicketsRequest) (*v1.ListTicketsResponse, error) {
 	panic("implement me")
 }
 
-func (tgs TicketGrpcService) UpdateTicket(ctx context.Context, request *v1.UpdateTicketRequest) (*v1.ListTicketsResponse, error) {
+func (tgs ticketGrpcService) UpdateTicket(ctx context.Context, request *v1.UpdateTicketRequest) (*v1.ListTicketsResponse, error) {
 	panic("implement me")
 }
 
-func (tgs TicketGrpcService) DeleteTicket(ctx context.Context, request *v1.DeleteTicketRequest) (*v1.DeleteTicketResponse, error) {
+func (tgs ticketGrpcService) DeleteTicket(ctx context.Context, request *v1.DeleteTicketRequest) (*v1.DeleteTicketResponse, error) {
 	panic("implement me")
 }
 
-func New(logger logger.Logger, useSchema ticket.TicketsController) *TicketGrpcService {
-	return &TicketGrpcService{logger: logger, ticketUsage: useSchema}
-}
-
-// func (s *TicketGrpcService) ListTickets(ctx context.Context, request *ticket_service_v1.ListTicketsRequest) (*ticket_service_v1.ListTicketsResponse, error) {
+// func (s *ticketGrpcService) ListTickets(ctx context.Context, request *ticket_service_v1.ListTicketsRequest) (*ticket_service_v1.ListTicketsResponse, error) {
 // 	c, err := s.ticketUsage.ListTickets(ctx, nil)
 // 	if err != nil {
 // 		s.logger.Errorf("ticketUsage.ListTickets: %v", err)
@@ -64,7 +68,7 @@ func New(logger logger.Logger, useSchema ticket.TicketsController) *TicketGrpcSe
 // 	return &ticket_service_v1.ListTicketsResponse{Tickets: c.ToProto()}, nil
 // }
 //
-// func (s *TicketGrpcService) CreateTicket(ctx context.Context, r *ticket_service_v1.CreateTicketRequest) (*ticket_service_v1.CreateTicketResponse, error) {
+// func (s *ticketGrpcService) CreateTicket(ctx context.Context, r *ticket_service_v1.CreateTicketRequest) (*ticket_service_v1.CreateTicketResponse, error) {
 // 	req := models.Ticket{
 // 		// ID:          uuid.MustParse(r.GetId()),
 // 		OwnerID:     uuid.MustParse(r.OwnerId),
