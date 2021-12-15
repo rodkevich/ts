@@ -33,12 +33,17 @@ services:
     ports:
       - "5557:5432/tcp"
 
+  ticket-service:
+    container_name: ticket-service
+    build:
+      context: .
+      dockerfile: ./build/docker/ticket/Dockerfile
 
 #  postgres-test:
 #    <<: *customer_db
 #    container_name: postgres-test
 #    ports:
-#      - "5557:5432/tcp"
+#      - "5558:5432/tcp"
 
 # docker-compose up --scale postgres-customer=2
 # docker run -it -p 27017:27017 --name mongo mongo:4 mongo

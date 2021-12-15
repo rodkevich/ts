@@ -50,32 +50,32 @@ func (tgs ticketGrpcService) CreateTicket(ctx context.Context, request *v1.Creat
 }
 
 func (tgs ticketGrpcService) ListTickets(ctx context.Context, request *v1.ListTicketsRequest) (*v1.ListTicketsResponse, error) {
-	if request.GetId() != "" {
-		var rtn = make([]*v1.Ticket, 0, 1)
-		requestedID := uuid.MustParse(request.GetId())
-		getTicket, err := tgs.ticketUsage.GetTicket(ctx, requestedID)
-		if err != nil {
-			tgs.logger.Errorf("ticketUsage.GetTicket: %v", err)
-			return nil, err
-		}
-
-		return &v1.ListTicketsResponse{
-			Tickets:       append(rtn, getTicket.ToProto()),
-			NextPageToken: "",
-		}, nil
-	}
-
 	getTickets, err := tgs.ticketUsage.ListTickets(ctx, nil)
 	if err != nil {
 		tgs.logger.Errorf("ticketUsage.GetTicket: %v", err)
 		return nil, err
 	}
+
 	var rtn = make([]*v1.Ticket, 0, len(getTickets.Tickets))
 	for _, x := range getTickets.Tickets {
 		rtn = append(rtn, x.ToProto())
 	}
 	return &v1.ListTicketsResponse{
 		Tickets:       rtn,
+		NextPageToken: "",
+	}, nil
+}
+
+func (tgs ticketGrpcService) GetTicket(ctx context.Context, uuid uuid.UUID) (*v1.ListTicketsResponse, error) {
+	var rtn = make([]*v1.Ticket, 0, 1)
+	getTicket, err := tgs.ticketUsage.GetTicket(ctx, uuid)
+	if err != nil {
+		tgs.logger.Errorf("ticketUsage.GetTicket: %v", err)
+		return nil, err
+	}
+
+	return &v1.ListTicketsResponse{
+		Tickets:       append(rtn, getTicket.ToProto()),
 		NextPageToken: "",
 	}, nil
 }

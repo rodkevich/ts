@@ -10,7 +10,7 @@ import (
 
 func (s *Server) initHTTPPingRouter() chi.Router {
 	return s.chi.Route("/ping", func(r chi.Router) {
-		s.logger.Info("sub-router ping: enabled")
+		s.logger.Info("sub-router 'Ping': enabled")
 		r.Use(middleware.RequestID)
 		r.Use(middleware.Logger)
 		r.Use(middleware.RealIP)

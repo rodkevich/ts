@@ -46,7 +46,7 @@ func (tc *ticketsController) ListTickets(ctx context.Context, filter *models.Fil
 	return getTicketsRepoResp, nil
 }
 
-func (tc *ticketsController) UpdateTicket(ctx context.Context, uuid uuid.UUID) (*models.Ticket, error) {
+func (tc *ticketsController) UpdateTicket(ctx context.Context, t *models.Ticket) (*models.Ticket, error) {
 	panic("implement me")
 }
 

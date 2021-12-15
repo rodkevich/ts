@@ -111,7 +111,7 @@ func (s *Server) Run() error {
 	s.initHTTPPingRouter()
 
 	serverHTTP := http.Server{
-		Addr:           "0.0.0.0:3334",
+		Addr:           "0.0.0.0" + s.cfg.HttpServer.Port,
 		Handler:        s.chi,
 		MaxHeaderBytes: maxHeaderBytes,
 	}
@@ -144,6 +144,7 @@ func (s *Server) Run() error {
 		s.logger.Info("Server Exited Properly")
 	}()
 	// Run http server
+	s.logger.Infof("HTTP Server is listening on port: %v", s.cfg.HttpServer.Port)
 	err = serverHTTP.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		log.Fatal(err)
