@@ -60,7 +60,7 @@ func NewServer(logger logger.Logger, cfg *cfg.Config, pgxPool *pgxpool.Pool) *Se
 func (s *Server) Run() error {
 
 	// Validator //
-	_ = validator.New()
+	validate := validator.New()
 
 	// DEBUG //
 	go func() {
@@ -90,9 +90,10 @@ func (s *Server) Run() error {
 		),
 	)
 
+	// Tickets-service //
 	ticketDB := ticketPGRepo.New(s.pgConnection)
 	ticketController := controllers.New(s.logger, ticketDB)
-	ticketService := ticketGRPCService.New(s.logger, ticketController)
+	ticketService := ticketGRPCService.New(s.logger, ticketController, validate)
 	pb.RegisterTicketServiceServer(serverGRPC, ticketService)
 
 	go func() {

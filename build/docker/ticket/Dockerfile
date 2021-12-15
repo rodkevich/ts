@@ -1,24 +1,18 @@
 # build stage
 FROM golang:1.17 AS builder
-LABEL maintainer="golang applictions linux builder"
-#ENV GO111MODULE=auto
-#ENV CGO_ENABLED=0
+LABEL maintainer="golang linux builder"
 ENV GOOS=linux
 
-WORKDIR /source
+WORKDIR /go/src/github.com/rodkevich/ts
 COPY . .
-WORKDIR /source/ticket
+WORKDIR /go/src/github.com/rodkevich/ts/ticket/
 RUN go mod download
-
-RUN go run ./cmd/main.go
-RUN go build -ldflags="-s -w" ./ticket/cmd/main.go
+RUN go build -ldflags="-s -w" ./cmd/ticket-service-server.go
+CMD ["go", "test"]
 
 ## server stage
 #FROM scratch
-#LABEL maintainer="ivan.rodkevich/app"
-#
-#COPY --from=builder /go/src/github.com/rodkevich/tbd/cmd/task5/server .
-#
-#EXPOSE 12300
-#
-#CMD ["./server"]
+#LABEL maintainer="ivan.rodkevich/ticket-service-server"
+#COPY --from=builder /go/src/github.com/rodkevich/ts/ticket/ticket-service-server.go .
+#EXPOSE 8081
+#CMD ["./ticket-service-server"]

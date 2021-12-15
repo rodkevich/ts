@@ -2,6 +2,7 @@ package grpc
 
 import (
 	"context"
+	"github.com/go-playground/validator/v10"
 
 	"github.com/google/uuid"
 
@@ -19,12 +20,14 @@ type ticketGrpcService struct {
 	ticketUsage ticket.TicketsController
 	tagUsage    ticket.TagController
 	//ticketTagUsage ticket.TicketTagsController
+	validate *validator.Validate
 }
 
-func New(logger logger.Logger, useSchema ticket.TicketsController) *ticketGrpcService {
+func New(logger logger.Logger, useSchema ticket.TicketsController, validator *validator.Validate) *ticketGrpcService {
 	return &ticketGrpcService{
 		logger:      logger,
 		ticketUsage: useSchema,
+		validate:    validator,
 	}
 }
 

@@ -33,19 +33,27 @@ services:
     ports:
       - "5557:5432/tcp"
 
-  ticket-service:
-    container_name: ticket-service
+#  api-service:
+##    image: ticket-api-service:latest
+#    container_name: api-service
+#    build:
+#      context: .
+#      dockerfile: ./build/docker/api-service/Dockerfile
+#    ports:
+#      - "12300:12300/tcp"
+
+
+  ticket-app:
+#    image: ticket-service-server:latest
+    container_name: ticket-app
     build:
       context: .
       dockerfile: ./build/docker/ticket/Dockerfile
+    ports:
+      - "8081:8081/tcp"
 
 #  postgres-test:
 #    <<: *customer_db
 #    container_name: postgres-test
 #    ports:
 #      - "5558:5432/tcp"
-
-# docker-compose up --scale postgres-customer=2
-# docker run -it -p 27017:27017 --name mongo mongo:4 mongo
-# MONGO_URI=mongodb://127.0.0.1:27217/bpm ./cbpm-backend
-# docker run -p 27217:27017 --name dev-mongo -v -d mongo
