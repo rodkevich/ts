@@ -30,7 +30,9 @@ func NewPgxConn(cfg *config.Config) (*pgxpool.Pool, error) {
 		cfg.Postgres.PostgresqlSSLMode,
 		cfg.Postgres.PostgresqlPassword,
 	)
-
+	fmt.Println("")
+	fmt.Println(dataSourceName)
+	fmt.Println("")
 	poolCfg, err := pgxpool.ParseConfig(dataSourceName)
 	if err != nil {
 		return nil, err

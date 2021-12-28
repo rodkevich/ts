@@ -16,7 +16,7 @@ func NewTagPG(db *pgxpool.Pool) *tagPG {
 	return &tagPG{db: db}
 }
 
-func (q *tagPG) CreateTag(ctx context.Context, name string, description *string) (models.Tag, error) {
+func (q *tagPG) Create(ctx context.Context, name string, description *string) (models.Tag, error) {
 	const createTag = `
 	INSERT INTO tags (name, description)
 	VALUES ($1, $2)
@@ -32,7 +32,7 @@ func (q *tagPG) CreateTag(ctx context.Context, name string, description *string)
 	return i, err
 }
 
-func (q *tagPG) DeleteTag(ctx context.Context, id uuid.UUID) error {
+func (q *tagPG) Delete(ctx context.Context, id uuid.UUID) error {
 	const deleteTag = `
 	DELETE FROM tags
 	WHERE id = $1
@@ -41,7 +41,7 @@ func (q *tagPG) DeleteTag(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
-func (q *tagPG) GetTag(ctx context.Context, id uuid.UUID) (models.Tag, error) {
+func (q *tagPG) Get(ctx context.Context, id uuid.UUID) (models.Tag, error) {
 	const getTag = `
 	SELECT 
 	id, name, description, created_at, updated_at, deleted FROM tags
@@ -57,7 +57,7 @@ func (q *tagPG) GetTag(ctx context.Context, id uuid.UUID) (models.Tag, error) {
 	return i, err
 }
 
-func (q *tagPG) ListTags(ctx context.Context) (*models.TagList, error) {
+func (q *tagPG) List(ctx context.Context) (*models.TagList, error) {
 	const listTags = `
 	SELECT 
 	id, name, description, created_at, updated_at, deleted FROM tags

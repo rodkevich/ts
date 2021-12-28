@@ -418,10 +418,10 @@ var file_ticket_proto_tag_v1_tag_proto_depIdxs = []int32{
 	5, // 1: tag.v1.Tag.updated_at:type_name -> google.protobuf.Timestamp
 	0, // 2: tag.v1.CreateTagResponse.tag:type_name -> tag.v1.Tag
 	0, // 3: tag.v1.ListTagsResponse.tags:type_name -> tag.v1.Tag
-	1, // 4: tag.v1.TagService.CreateTag:input_type -> tag.v1.CreateTagRequest
-	3, // 5: tag.v1.TagService.ListTags:input_type -> tag.v1.ListTagsRequest
-	2, // 6: tag.v1.TagService.CreateTag:output_type -> tag.v1.CreateTagResponse
-	4, // 7: tag.v1.TagService.ListTags:output_type -> tag.v1.ListTagsResponse
+	1, // 4: tag.v1.TagService.Create:input_type -> tag.v1.CreateTagRequest
+	3, // 5: tag.v1.TagService.List:input_type -> tag.v1.ListTagsRequest
+	2, // 6: tag.v1.TagService.Create:output_type -> tag.v1.CreateTagResponse
+	4, // 7: tag.v1.TagService.List:output_type -> tag.v1.ListTagsResponse
 	6, // [6:8] is the sub-list for method output_type
 	4, // [4:6] is the sub-list for method input_type
 	4, // [4:4] is the sub-list for extension type_name

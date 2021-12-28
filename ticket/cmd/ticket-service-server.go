@@ -1,7 +1,7 @@
 package main
 
 import (
-	"log"
+	sysLog "log"
 	"os"
 
 	"github.com/rodkevich/ts/ticket/config"
@@ -11,34 +11,35 @@ import (
 )
 
 func main() {
-	configPath := config.GetConfigPath(os.Getenv("config"))
+	configPath := config.GetConfigPath(os.Getenv("CONFIG"))
 	cfg, err := config.GetConfig(configPath)
 	if err != nil {
-		log.Fatalf("Loading config: %v", err)
+		sysLog.Fatalf("Loading config: %v", err)
 	}
 
 	// logger
-	appLogger := logger.New(cfg)
-	appLogger.InitLogger()
-	appLogger.Info("Starting user server")
-	appLogger.Infof(
+	log := logger.New(cfg)
+	log.InitLogger()
+
+	log.Info("Starting user server")
+	log.Infof(
 		"AppVersion: %s, LogLevel: %s, Mode: %s",
 		cfg.GRPCServer.AppVersion,
 		cfg.Logger.Level,
 		cfg.GRPCServer.Mode,
 	)
-	appLogger.Infof("Success parsed config: %#v", cfg.GRPCServer.AppVersion)
+	log.Infof("Success parsed config: %#v", cfg.GRPCServer.AppVersion)
 
 	// database
 	pgxConn, err := postgres.NewPgxConn(cfg)
 	if err != nil {
-		appLogger.Fatal("cannot connect to postgres", err)
+		log.Fatal("cannot connect to postgres", err)
 	}
 	defer pgxConn.Close()
 
-	appLogger.Infof("%-v", pgxConn.Config().ConnString())
+	log.Infof("%-v", pgxConn.Config().ConnString())
 
 	// server
-	s := servers.NewServer(appLogger, cfg, pgxConn)
-	appLogger.Fatal(" server stopped running: ERRORS: ", s.Run())
+	s := servers.NewServer(log, cfg, pgxConn)
+	log.Fatal(" server stopped running: ERRORS: ", s.Run())
 }

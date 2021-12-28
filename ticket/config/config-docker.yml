@@ -32,10 +32,10 @@ logger:
   Level: info
 
 postgres:
-  PostgresqlHost: localhost
+  PostgresqlHost: postgres-ticket
   PostgresqlPort: 5556
   PostgresqlUser: postgres
   PostgresqlPassword: postgres
   PostgresqlDbname: postgres
   PostgresqlSslmode: "disable"
-  PgDriver: pgx
+  PgDriver: postgres

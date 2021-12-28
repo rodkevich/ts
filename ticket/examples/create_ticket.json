@@ -1,0 +1,11 @@
+{
+  "owner_id": "595f3d55-3f65-4a0f-9895-452ed041478a",
+  "name_short": "Short name example",
+  "name_ext": "Name example",
+  "description": "Description example",
+  "amount": 10,
+  "price": 1.4,
+  "currency": 10,
+  "priority": "Regular",
+  "published": true
+}

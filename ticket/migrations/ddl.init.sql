@@ -37,8 +37,8 @@ CREATE table if not exists tickets
     priority    enum_tickets_priority not null default 'Draft'::enum_tickets_priority,
     published   bool                  not null default false,
     active      bool                  not null default true,
-    created_at  timestamptz           not null default now(),
-    updated_at  timestamptz           not null default now(),
+    created_at  timestamptz           not null default (now() AT TIME ZONE 'utc'),
+    updated_at  timestamptz           not null default (now() AT TIME ZONE 'utc'),
     deleted     bool                  not null default false,
     PRIMARY KEY (id)
 );

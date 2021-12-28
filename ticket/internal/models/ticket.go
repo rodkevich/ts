@@ -68,9 +68,9 @@ func (t *Ticket) ToProto() *v1.Ticket {
 
 // ToProto ..
 func (tl *TicketsList) ToProto() []*v1.Ticket {
-	customersList := make([]*v1.Ticket, 0, len(tl.Tickets))
+	ticketsListList := make([]*v1.Ticket, 0, len(tl.Tickets))
 	for _, ticket := range tl.Tickets {
-		customersList = append(customersList, ticket.ToProto())
+		ticketsListList = append(ticketsListList, ticket.ToProto())
 	}
-	return customersList
+	return ticketsListList
 }

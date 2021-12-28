@@ -32,7 +32,7 @@ func NewTagServiceClient(cc grpc.ClientConnInterface) TagServiceClient {
 
 func (c *tagServiceClient) CreateTag(ctx context.Context, in *CreateTagRequest, opts ...grpc.CallOption) (*CreateTagResponse, error) {
 	out := new(CreateTagResponse)
-	err := c.cc.Invoke(ctx, "/tag.v1.TagService/CreateTag", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/tag.v1.TagService/Create", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -41,7 +41,7 @@ func (c *tagServiceClient) CreateTag(ctx context.Context, in *CreateTagRequest, 
 
 func (c *tagServiceClient) ListTags(ctx context.Context, in *ListTagsRequest, opts ...grpc.CallOption) (*ListTagsResponse, error) {
 	out := new(ListTagsResponse)
-	err := c.cc.Invoke(ctx, "/tag.v1.TagService/ListTags", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/tag.v1.TagService/List", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -62,10 +62,10 @@ type UnimplementedTagServiceServer struct {
 }
 
 func (UnimplementedTagServiceServer) CreateTag(context.Context, *CreateTagRequest) (*CreateTagResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateTag not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
 }
 func (UnimplementedTagServiceServer) ListTags(context.Context, *ListTagsRequest) (*ListTagsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListTags not implemented")
+	return nil, status.Errorf(codes.Unimplemented, "method List not implemented")
 }
 func (UnimplementedTagServiceServer) mustEmbedUnimplementedTagServiceServer() {}
 
@@ -90,7 +90,7 @@ func _TagService_CreateTag_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/tag.v1.TagService/CreateTag",
+		FullMethod: "/tag.v1.TagService/Create",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TagServiceServer).CreateTag(ctx, req.(*CreateTagRequest))
@@ -108,7 +108,7 @@ func _TagService_ListTags_Handler(srv interface{}, ctx context.Context, dec func
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/tag.v1.TagService/ListTags",
+		FullMethod: "/tag.v1.TagService/List",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(TagServiceServer).ListTags(ctx, req.(*ListTagsRequest))
@@ -124,11 +124,11 @@ var TagService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*TagServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateTag",
+			MethodName: "Create",
 			Handler:    _TagService_CreateTag_Handler,
 		},
 		{
-			MethodName: "ListTags",
+			MethodName: "List",
 			Handler:    _TagService_ListTags_Handler,
 		},
 	},

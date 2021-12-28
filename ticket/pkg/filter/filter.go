@@ -10,27 +10,28 @@ const (
 	queryParamFields = "fields"
 	queryParamSearch = "search"
 	// Paging settings
-	queryParamPagingDisable         = "disable_paging"
+	queryParamPaging                = "paging"
 	queryParamPage                  = "page"
 	queryParamSize                  = "size"
 	responseItemsDefaultPage        = 1
-	responseItemsDefaultSizePerPage = 20
+	responseItemsDefaultSizePerPage = 3
 )
 
 type Common struct {
-	Extended      bool `json:"extended"`
-	Search        bool `json:"search"`
-	Page          int  `json:"page"`
-	Size          int  `json:"size"`
-	PagingDisable bool `json:"paging_disable"`
+	Extended bool   `json:"extended"`
+	Search   bool   `json:"search"`
+	Page     uint64 `json:"page"`
+	Size     uint64 `json:"size"`
+	Paging   bool   `json:"paging"`
 }
 
-func New(queries url.Values) *Common {
+func NewFromURL(queries url.Values) *Common {
+
 	isExtended := has(queries, queryParamFields)
 	isSearch := has(queries, queryParamSearch)
 	page, _ := strconv.Atoi(queries.Get(queryParamPage))
 	sizePerPage, _ := strconv.Atoi(queries.Get(queryParamSize))
-	pagingDisable, _ := strconv.ParseBool(queries.Get(queryParamPagingDisable))
+	paging, _ := strconv.ParseBool(queries.Get(queryParamPaging))
 
 	if !has(queries, queryParamSize) {
 		sizePerPage = responseItemsDefaultSizePerPage
@@ -40,15 +41,14 @@ func New(queries url.Values) *Common {
 		page = responseItemsDefaultPage
 	}
 	// offset calculation:
-	// page = (page - 1) * sizePerPage + 1
 	page = (page - 1) * sizePerPage
 
 	return &Common{
-		Extended:      isExtended,
-		Search:        isSearch,
-		Page:          page,
-		Size:          sizePerPage,
-		PagingDisable: pagingDisable,
+		Extended: isExtended,
+		Search:   isSearch,
+		Page:     uint64(page),
+		Size:     uint64(sizePerPage),
+		Paging:   paging,
 	}
 }
 
