@@ -2,7 +2,9 @@ package postgres
 
 import (
 	"context"
+
 	"github.com/google/uuid"
+
 	"github.com/rodkevich/ts/ticket/internal/models"
 )
 

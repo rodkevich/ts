@@ -1,42 +1,43 @@
 syntax = "proto3";
 
 
+package tag.v1;
+
 import "google/protobuf/timestamp.proto";
 
-package tag.v1;
 option go_package = "ticket/proto/tag/v1";
 
 service TagService {
-  rpc CreateTag(CreateTagRequest) returns (CreateTagResponse);
-  rpc ListTags(ListTagsRequest) returns (ListTagsResponse);
+    rpc CreateTag(CreateTagRequest) returns (CreateTagResponse);
+    rpc ListTags(ListTagsRequest) returns (ListTagsResponse);
 }
 
 message Tag {
-  string id = 1;
-  string name = 2;
-  string description = 3;
-  google.protobuf.Timestamp created_at = 4;
-  google.protobuf.Timestamp updated_at = 5;
-  bool deleted = 6;
+    string id = 1;
+    string name = 2;
+    string description = 3;
+    google.protobuf.Timestamp created_at = 4;
+    google.protobuf.Timestamp updated_at = 5;
+    bool deleted = 6;
 }
 
 message CreateTagRequest {
-  string name = 1;
-  string description = 2;
+    string name = 1;
+    string description = 2;
 }
 
 message CreateTagResponse {
-  Tag tag = 1;
+    Tag tag = 1;
 }
 
 message ListTagsRequest {
-  string id = 1;
-  uint32 page_size = 2;
-  string page_token = 3;
-  bool reverse = 4;
+    string id = 1;
+    uint32 page_size = 2;
+    string page_token = 3;
+    bool reverse = 4;
 }
 
 message ListTagsResponse {
-  repeated Tag tags = 1;
-  string next_page_token = 2;
+    repeated Tag tags = 1;
+    string next_page_token = 2;
 }

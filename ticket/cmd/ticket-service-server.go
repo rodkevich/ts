@@ -21,7 +21,7 @@ func main() {
 	log := logger.New(cfg)
 	log.InitLogger()
 
-	log.Info("Starting user server")
+	log.Info("Starting tickets server")
 	log.Infof(
 		"AppVersion: %s, LogLevel: %s, Mode: %s",
 		cfg.GRPCServer.AppVersion,

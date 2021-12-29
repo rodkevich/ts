@@ -1,10 +1,12 @@
 package models
 
 import (
+	"time"
+
 	"github.com/google/uuid"
+
 	"github.com/rodkevich/ts/ticket/pkg/types"
 	v1 "github.com/rodkevich/ts/ticket/proto/tag/v1"
-	"time"
 )
 
 type (

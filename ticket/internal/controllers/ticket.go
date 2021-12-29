@@ -12,52 +12,52 @@ import (
 )
 
 type ticketsController struct {
-	logger       logger.Logger
+	log          logger.Logger
 	ticketPGRepo ticket.TicketsProprietor
 }
 
 func New(log logger.Logger, ticketRepo ticket.TicketsProprietor) *ticketsController {
-	return &ticketsController{ticketPGRepo: ticketRepo, logger: log}
+	return &ticketsController{ticketPGRepo: ticketRepo, log: log}
 }
 
-func (tc *ticketsController) CreateTicket(ctx context.Context, t *models.Ticket) (*models.Ticket, error) {
+func (app *ticketsController) CreateTicket(ctx context.Context, t *models.Ticket) (*models.Ticket, error) {
 	fmt.Printf("controllers CreateTicket: %+v\n", t)
 
-	createTicketRepoResp, err := tc.ticketPGRepo.Create(ctx, t)
+	createTicketRepoResp, err := app.ticketPGRepo.Create(ctx, t)
 	if err != nil {
-		tc.logger.Errorf("ticketPGRepo.Create: %v", err)
+		app.log.Errorf("ticketPGRepo.Create: %v", err)
 		return nil, err
 	}
 
 	return createTicketRepoResp, nil
 }
 
-func (tc *ticketsController) GetTicket(ctx context.Context, uuid uuid.UUID) (*models.Ticket, error) {
-	getTicketRepoResp, err := tc.ticketPGRepo.Get(ctx, uuid)
+func (app *ticketsController) GetTicket(ctx context.Context, uuid uuid.UUID) (*models.Ticket, error) {
+	getTicketRepoResp, err := app.ticketPGRepo.Get(ctx, uuid)
 	if err != nil {
-		tc.logger.Errorf("ticketPGRepo.Get: %v", err)
+		app.log.Errorf("ticketPGRepo.Get: %v", err)
 		return nil, err
 	}
 	return getTicketRepoResp, nil
 }
 
-func (tc *ticketsController) ListTickets(ctx context.Context, filter *models.TicketFilter) (*models.TicketsList, error) {
+func (app *ticketsController) ListTickets(ctx context.Context, filter *models.TicketFilter) (*models.TicketsList, error) {
 
 	lastID := uuid.MustParse(filter.LastId)
 
 	switch filter.Base.Search {
 	case true:
-		repoSearch, _, err := tc.ticketPGRepo.Search(ctx, &lastID, filter)
+		repoSearch, _, err := app.ticketPGRepo.Search(ctx, &lastID, filter)
 		if err != nil {
-			tc.logger.Errorf("ticketPGRepo.Search: %v", err)
+			app.log.Errorf("ticketPGRepo.Search: %v", err)
 			return nil, err
 		}
 		return repoSearch, nil
 
 	default:
-		repoList, _, err := tc.ticketPGRepo.List(ctx, &lastID, filter)
+		repoList, _, err := app.ticketPGRepo.List(ctx, &lastID, filter)
 		if err != nil {
-			tc.logger.Errorf("ticketPGRepo.List: %v", err)
+			app.log.Errorf("ticketPGRepo.List: %v", err)
 			return nil, err
 		}
 
@@ -65,19 +65,19 @@ func (tc *ticketsController) ListTickets(ctx context.Context, filter *models.Tic
 	}
 }
 
-func (tc *ticketsController) UpdateTicket(ctx context.Context, t *models.Ticket) (*models.Ticket, error) {
+func (app *ticketsController) UpdateTicket(ctx context.Context, t *models.Ticket) (*models.Ticket, error) {
 	panic("implement me")
 }
 
-func (tc *ticketsController) DeleteTicket(ctx context.Context, id uuid.UUID, hardDelete bool) (*models.Ticket, error) {
+func (app *ticketsController) DeleteTicket(ctx context.Context, id uuid.UUID, hardDelete bool) (*models.Ticket, error) {
 
 	switch hardDelete {
 	case true:
 		fmt.Printf("controllers DeleteTicket hard-true: %+v %+v\n", id, hardDelete)
 
-		err := tc.ticketPGRepo.Delete(ctx, id, true)
+		err := app.ticketPGRepo.Delete(ctx, id, true)
 		if err != nil {
-			tc.logger.Errorf("ticketPGRepo.Delete: %v", err)
+			app.log.Errorf("ticketPGRepo.Delete: %v", err)
 			return nil, err
 		}
 
@@ -86,9 +86,9 @@ func (tc *ticketsController) DeleteTicket(ctx context.Context, id uuid.UUID, har
 	default:
 		fmt.Printf("controllers DeleteTicket default: %+v %+v\n", id, hardDelete)
 
-		err := tc.ticketPGRepo.Delete(ctx, id, false)
+		err := app.ticketPGRepo.Delete(ctx, id, false)
 		if err != nil {
-			tc.logger.Errorf("ticketPGRepo.Delete: %v", err)
+			app.log.Errorf("ticketPGRepo.Delete: %v", err)
 			return nil, err
 		}
 

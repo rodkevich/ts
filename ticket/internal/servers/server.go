@@ -2,7 +2,6 @@ package servers
 
 import (
 	"context"
-	"github.com/rodkevich/ts/ticket/internal/controllers"
 	"log"
 	"net"
 	"net/http"
@@ -23,11 +22,10 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 
 	cfg "github.com/rodkevich/ts/ticket/config"
-
-	ticketGRPCService "github.com/rodkevich/ts/ticket/internal/buleprints/ticket/grpc"
+	"github.com/rodkevich/ts/ticket/internal/controllers"
+	ticketGRPCService "github.com/rodkevich/ts/ticket/internal/handlers/ticket/grpc"
 	ticketPGRepo "github.com/rodkevich/ts/ticket/internal/repositories/ticket/postgres"
 	"github.com/rodkevich/ts/ticket/pkg/logger"
-
 	pb "github.com/rodkevich/ts/ticket/proto/ticket/v1"
 )
 
@@ -71,11 +69,11 @@ func (s *Server) Run() error {
 	}()
 
 	// Grpc //
-	lis, err := net.Listen("tcp", s.cfg.GRPCServer.Port)
+	listener, err := net.Listen("tcp", s.cfg.GRPCServer.Port)
 	if err != nil {
 		return err
 	}
-	defer lis.Close()
+	defer listener.Close()
 
 	serverGRPC := grpc.NewServer(grpc.KeepaliveParams(keepalive.ServerParameters{
 		MaxConnectionIdle: s.cfg.GRPCServer.MaxConnectionIdle * time.Minute,
@@ -98,9 +96,9 @@ func (s *Server) Run() error {
 
 	go func() {
 		s.logger.Infof("GRPC Server is listening on port: %v", s.cfg.GRPCServer.Port)
-		err := serverGRPC.Serve(lis)
+		err := serverGRPC.Serve(listener)
 		if err != nil {
-			s.logger.Fatal("serverGRPC.Serve(lis) is not running")
+			s.logger.Fatal("serverGRPC.Serve(listener) is not running")
 		}
 	}()
 

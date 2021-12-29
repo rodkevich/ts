@@ -2,7 +2,9 @@ package postgres
 
 import (
 	"context"
+
 	"github.com/jackc/pgx/v4/pgxpool"
+
 	"github.com/rodkevich/ts/ticket/internal/models"
 
 	"github.com/google/uuid"

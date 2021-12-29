@@ -1,6 +1,5 @@
 syntax = "proto3";
 
-
 package ticket.v1;
 
 import "google/protobuf/timestamp.proto";
@@ -9,6 +8,7 @@ option go_package = "ticket/proto/ticket/v1";
 
 service TicketService {
     rpc CreateTicket(CreateTicketRequest) returns (CreateTicketResponse);
+    rpc GetTicket(GetTicketRequest) returns (ListTicketsResponse);
     rpc ListTickets(ListTicketsRequest) returns (ListTicketsResponse);
     rpc UpdateTicket(UpdateTicketRequest) returns (ListTicketsResponse);
     rpc DeleteTicket(DeleteTicketRequest) returns (DeleteTicketResponse);
@@ -47,6 +47,10 @@ message CreateTicketResponse {
     Ticket ticket = 1;
 }
 
+message GetTicketRequest {
+    string id = 1;
+}
+
 message ListTicketsRequest {
     string id = 1;
     bool reverse = 2;
@@ -69,7 +73,7 @@ message UpdateTicketRequest {
 
 message DeleteTicketRequest {
     string id = 1;
-    bool hard =2;
+    bool hard = 2;
 }
 
 message DeleteTicketResponse {}

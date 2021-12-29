@@ -56,8 +56,8 @@ CREATE table if not exists tags
     id          uuid        not null default gen_random_uuid(),
     name        citext      not null,
     description citext      null,
-    created_at  timestamptz not null default now(),
-    updated_at  timestamptz not null default now(),
+    created_at  timestamptz not null default (now() AT TIME ZONE 'utc'),
+    updated_at  timestamptz not null default (now() AT TIME ZONE 'utc'),
     deleted     bool        not null default false,
     PRIMARY KEY (id)
 );

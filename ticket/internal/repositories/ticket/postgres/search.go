@@ -3,8 +3,10 @@ package postgres
 import (
 	"context"
 	"fmt"
+
 	"github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
+
 	"github.com/rodkevich/ts/ticket/internal/models"
 )
 
