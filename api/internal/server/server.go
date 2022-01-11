@@ -35,6 +35,7 @@ func NewServer(logger logger.Logger, cfg *config.Config, pgxPool *pgxpool.Pool) 
 }
 
 func (s *Server) Run() error {
+
 	// Http //
 	s.initHTTPPingRouter()
 	s.initHTTPTicketRouter()

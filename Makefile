@@ -63,11 +63,11 @@ gen-ticket:
 
 linter:
 	echo "Starting linters"
+	cd ticket && golangci-lint run ./...
+	cd ..
 	cd customer && golangci-lint run ./...
 	cd ..
 	cd photo && golangci-lint run ./...
-	cd ..
-	cd ticket && golangci-lint run ./...
 	cd ..
 	cd profile && golangci-lint run ./...
 
@@ -96,3 +96,13 @@ develop:
 local:
 	echo "Starting local environment"
 	docker-compose -f docker-compose.local.yml up --build
+
+SRCS = $(shell find . -name '*.go' | grep -v '^./vendor/')
+
+fmtcheck:
+	$(foreach file,$(SRCS),gofmt $(file) | diff -u $(file) - || exit;)
+
+lint:
+	@ go get -u github.com/golang/lint/golint
+	$(foreach file,$(SRCS),fgt golint -min_confidence 0.9 $(file) || exit;)
+

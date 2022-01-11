@@ -12,6 +12,7 @@ type Config struct {
 	HttpServer HttpServer
 	Postgres   PostgresConfig
 	Logger     Logger
+	Redis      RedisConfig
 }
 
 type HttpServer struct {
@@ -62,6 +63,19 @@ type PostgresConfig struct {
 	PostgresqlDbname   string
 	PostgresqlSSLMode  string
 	PgDriver           string
+}
+
+// RedisConfig config
+type RedisConfig struct {
+	RedisAddr      string
+	RedisPassword  string
+	RedisDB        string
+	RedisDefaultDB string
+	MinIdleConn    int
+	PoolSize       int
+	PoolTimeout    int
+	Password       string
+	DB             int
 }
 
 // LoadConfig loads file from given path

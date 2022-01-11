@@ -12,9 +12,9 @@ const (
 	// Paging settings
 	queryParamPaging                = "paging"
 	queryParamPage                  = "page"
-	queryParamSize                  = "size"
+	queryParamSize                  = "page_size"
 	responseItemsDefaultPage        = 1
-	responseItemsDefaultSizePerPage = 3
+	responseItemsDefaultSizePerPage = 10
 )
 
 type Common struct {
