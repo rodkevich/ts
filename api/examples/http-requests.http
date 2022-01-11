@@ -8,7 +8,7 @@ GET http://0.0.0.0:8000/ping/config
 GET http://0.0.0.0:8000/ticket
 
 ###
-GET http://0.0.0.0:8000/ticket/
+GET http://0.0.0.0:8000/ticket/list
 
 ###
 POST http://0.0.0.0:8000/ticket
@@ -23,20 +23,4 @@ POST http://0.0.0.0:8000/ticket
   "currency": 10,
   "priority": "Regular",
   "published": true
-}
-
-###
-GET http://0.0.0.0:8000/ticket/list
-
-{
-  "id": "049c64ed-5bb7-47a9-bd3f-5345288d8ad8",
-  "reverse": true,
-  "extended": true,
-  "search": true,
-  "paging": true,
-  "page_size": 100,
-  "page_token": "Hello",
-  "fields": [
-    "Hello"
-  ]
 }

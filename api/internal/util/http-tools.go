@@ -1,7 +1,9 @@
 package util
 
 import (
+	"fmt"
 	"net/url"
+	"strings"
 
 	"github.com/google/uuid"
 )
@@ -20,9 +22,23 @@ func ConvertStringArrToUUID(ids []string) ([]uuid.UUID, error) {
 	return uids, nil
 }
 
-func ConvertRowToFieldsArr(values url.Values, name string) ([]string, error) {
-	var rtn []string
-	// []string{"some_field_to_be_returned", "ticket_photos", "ticket_description"}
+func FieldsFromURL(values url.Values, name string) ([]string, error) {
+	if name == "" || values == nil {
 
-	return rtn, nil
+		return nil, nil
+	}
+
+	key := fmt.Sprintf("fields[%s]", name)
+	raw, ok := values[key]
+	if ok {
+		substrings := strings.Split(raw[0], ",")
+		var rtn []string
+		for _, each := range substrings {
+			rtn = append(rtn, each)
+		}
+
+		return rtn, nil
+	}
+
+	return nil, nil
 }

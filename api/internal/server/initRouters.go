@@ -9,6 +9,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
 
+	"github.com/rodkevich/ts/api/internal/util"
 	"github.com/rodkevich/ts/api/pkg/filter"
 	v1 "github.com/rodkevich/ts/api/proto/ticket/v1"
 )
@@ -61,6 +62,7 @@ func (s *Server) initHTTPTicketRouter() chi.Router {
 			log.Println(r.URL.Query())
 			id := r.URL.Query().Get("id")
 			size := uint32(f.Size)
+			fields, _ := util.FieldsFromURL(r.URL.Query(), "ticket")
 
 			req := v1.ListTicketsRequest{
 				Id:        id,
@@ -70,7 +72,7 @@ func (s *Server) initHTTPTicketRouter() chi.Router {
 				Paging:    f.Paging,
 				PageSize:  size,
 				PageToken: "",
-				// Fields:    []string{"photo_links"},
+				Fields:    fields,
 				// Fields: FieldsFromURL(r),
 			}
 

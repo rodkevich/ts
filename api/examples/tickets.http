@@ -1,5 +1,0 @@
-### Tets if HTTP server is online
-GET http://0.0.0.0:8081/ping
-
-### View service config file
-GET http://0.0.0.0:8081/ping/config

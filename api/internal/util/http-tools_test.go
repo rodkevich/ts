@@ -12,9 +12,9 @@ func TestConvertRowToFieldsArr(t *testing.T) {
 	)
 	uv := u.Query()
 
-	got, err := ConvertRowToFieldsArr(uv, "ticket")
+	got, err := FieldsFromURL(uv, "ticket")
 	if err != nil {
-		t.Errorf("ERROR: ConvertRowToFieldsArr: %v", err)
+		t.Errorf("ERROR: FieldsFromURL: %v", err)
 
 	}
 	want := []string{"some_field_to_be_returned", "ticket_photos", "ticket_description"}
