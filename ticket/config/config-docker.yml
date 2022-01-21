@@ -1,5 +1,5 @@
 GRPCServer:
-  AppVersion: 1.0.0
+  AppVersion: 1.0.0-docker
   Port: ":5001"
   CookieLifeTime: 360
   CsrfExpire: 15
@@ -33,9 +33,9 @@ logger:
 
 postgres:
   PostgresqlHost: postgres-ticket
-  PostgresqlPort: 5556
+  PostgresqlPort: 5432
   PostgresqlUser: postgres
   PostgresqlPassword: postgres
   PostgresqlDbname: postgres
   PostgresqlSslmode: "disable"
-  PgDriver: postgres
+  PgDriver: pgx

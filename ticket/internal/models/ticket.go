@@ -7,7 +7,7 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/rodkevich/ts/ticket/pkg/types"
-	"github.com/rodkevich/ts/ticket/proto/ticket/v1"
+	v1 "github.com/rodkevich/ts/ticket/proto/ticket/v1"
 )
 
 type (
@@ -42,7 +42,9 @@ type (
 	}
 
 	TicketsList struct {
-		Tickets []*Ticket `json:"tickets"`
+		TotalCount int
+		HasMore    bool
+		Tickets    []*Ticket `json:"tickets"`
 	}
 )
 

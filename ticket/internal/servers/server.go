@@ -22,8 +22,8 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 
 	cfg "github.com/rodkevich/ts/ticket/config"
-	"github.com/rodkevich/ts/ticket/internal/controllers"
-	ticketGRPCService "github.com/rodkevich/ts/ticket/internal/handlers/ticket/grpc"
+	ticketGrpcControllers "github.com/rodkevich/ts/ticket/internal/controllers/ticket/grpc"
+	"github.com/rodkevich/ts/ticket/internal/handlers"
 	ticketPGRepo "github.com/rodkevich/ts/ticket/internal/repositories/ticket/postgres"
 	"github.com/rodkevich/ts/ticket/pkg/logger"
 	pb "github.com/rodkevich/ts/ticket/proto/ticket/v1"
@@ -90,8 +90,8 @@ func (s *Server) Run() error {
 
 	// Tickets-service //
 	ticketDB := ticketPGRepo.New(s.pgConnection)
-	ticketController := controllers.New(s.logger, ticketDB)
-	ticketService := ticketGRPCService.New(s.logger, ticketController, validate)
+	ticketHandlers := handlers.New(s.logger, ticketDB)
+	ticketService := ticketGrpcControllers.New(s.logger, ticketHandlers, validate)
 	pb.RegisterTicketServiceServer(serverGRPC, ticketService)
 
 	go func() {

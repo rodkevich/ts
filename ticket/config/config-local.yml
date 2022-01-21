@@ -1,5 +1,5 @@
 GRPCServer:
-  AppVersion: 1.0.0
+  AppVersion: 1.0.0-local
   Port: ":5001"
   CookieLifeTime: 360
   CsrfExpire: 15

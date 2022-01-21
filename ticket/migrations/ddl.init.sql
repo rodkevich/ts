@@ -9,12 +9,33 @@ CREATE EXTENSION if not exists "pgcrypto";
 CREATE EXTENSION if not exists CITEXT;
 
 --- COMMON FUNCTIONS -----------------------------------------------------------
+
 CREATE or replace FUNCTION touch_updated_at()
     returns trigger as
 $$
 begin
     NEW.updated_at = now();
     return NEW;
+end;
+$$ language 'plpgsql';
+
+
+CREATE or replace FUNCTION get_tickets_by_tag(tag_uuid uuid)
+    returns TABLE
+            (
+                ticket     uuid,
+                owner_id   uuid,
+                updated_at timestamptz,
+                active     bool
+            )
+as
+$$
+begin
+    return QUERY
+        SELECT t.id, t.owner_id, t.updated_at, t.active
+        FROM ticket_tags
+                 left join tickets t on t.id = ticket_tags.ticket_id
+        WHERE ticket_tags.tag_id = tag_uuid;
 end;
 $$ language 'plpgsql';
 

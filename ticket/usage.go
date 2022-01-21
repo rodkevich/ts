@@ -8,7 +8,7 @@ import (
 	"github.com/rodkevich/ts/ticket/internal/models"
 )
 
-type TicketsController interface {
+type TicketsUsage interface {
 	CreateTicket(context.Context, *models.Ticket) (*models.Ticket, error)
 	GetTicket(context.Context, uuid.UUID) (*models.Ticket, error)
 	ListTickets(context.Context, *models.TicketFilter) (*models.TicketsList, error)
@@ -16,7 +16,7 @@ type TicketsController interface {
 	DeleteTicket(ctx context.Context, id uuid.UUID, hardDelete bool) (*models.Ticket, error)
 }
 
-type TagController interface {
+type TagsUsage interface {
 	CreateTag(context.Context, *models.Tag) (*models.Tag, error)
 	GetTag(context.Context, uuid.UUID) (*models.Tag, error)
 	ListTags(context.Context, *models.TicketFilter) (*models.TagList, error)

@@ -1,4 +1,4 @@
-package controllers
+package handlers
 
 import (
 	"context"
@@ -11,17 +11,17 @@ import (
 	"github.com/rodkevich/ts/ticket/pkg/logger"
 )
 
-type ticketsController struct {
+type ticketsUsage struct {
 	log          logger.Logger
 	ticketPGRepo ticket.TicketsProprietor
 }
 
-func New(log logger.Logger, ticketRepo ticket.TicketsProprietor) *ticketsController {
-	return &ticketsController{ticketPGRepo: ticketRepo, log: log}
+func New(log logger.Logger, ticketRepo ticket.TicketsProprietor) *ticketsUsage {
+	return &ticketsUsage{ticketPGRepo: ticketRepo, log: log}
 }
 
-func (app *ticketsController) CreateTicket(ctx context.Context, t *models.Ticket) (*models.Ticket, error) {
-	fmt.Printf("controllers CreateTicket: %+v\n", t)
+func (app *ticketsUsage) CreateTicket(ctx context.Context, t *models.Ticket) (*models.Ticket, error) {
+	fmt.Printf("handlers CreateTicket: %+v\n", t)
 
 	createTicketRepoResp, err := app.ticketPGRepo.Create(ctx, t)
 	if err != nil {
@@ -32,7 +32,7 @@ func (app *ticketsController) CreateTicket(ctx context.Context, t *models.Ticket
 	return createTicketRepoResp, nil
 }
 
-func (app *ticketsController) GetTicket(ctx context.Context, uuid uuid.UUID) (*models.Ticket, error) {
+func (app *ticketsUsage) GetTicket(ctx context.Context, uuid uuid.UUID) (*models.Ticket, error) {
 	getTicketRepoResp, err := app.ticketPGRepo.Get(ctx, uuid)
 	if err != nil {
 		app.log.Errorf("ticketPGRepo.Get: %v", err)
@@ -41,13 +41,13 @@ func (app *ticketsController) GetTicket(ctx context.Context, uuid uuid.UUID) (*m
 	return getTicketRepoResp, nil
 }
 
-func (app *ticketsController) ListTickets(ctx context.Context, filter *models.TicketFilter) (*models.TicketsList, error) {
+func (app *ticketsUsage) ListTickets(ctx context.Context, filter *models.TicketFilter) (*models.TicketsList, error) {
 
 	lastID := uuid.MustParse(filter.LastId)
 
 	switch filter.Base.Search {
 	case true:
-		repoSearch, _, err := app.ticketPGRepo.Search(ctx, &lastID, filter)
+		repoSearch, _, err := app.ticketPGRepo.Search(ctx, nil, filter)
 		if err != nil {
 			app.log.Errorf("ticketPGRepo.Search: %v", err)
 			return nil, err
@@ -65,15 +65,15 @@ func (app *ticketsController) ListTickets(ctx context.Context, filter *models.Ti
 	}
 }
 
-func (app *ticketsController) UpdateTicket(ctx context.Context, t *models.Ticket) (*models.Ticket, error) {
+func (app *ticketsUsage) UpdateTicket(ctx context.Context, t *models.Ticket) (*models.Ticket, error) {
 	panic("implement me")
 }
 
-func (app *ticketsController) DeleteTicket(ctx context.Context, id uuid.UUID, hardDelete bool) (*models.Ticket, error) {
+func (app *ticketsUsage) DeleteTicket(ctx context.Context, id uuid.UUID, hardDelete bool) (*models.Ticket, error) {
 
 	switch hardDelete {
 	case true:
-		fmt.Printf("controllers DeleteTicket hard-true: %+v %+v\n", id, hardDelete)
+		fmt.Printf("handlers DeleteTicket hard-true: %+v %+v\n", id, hardDelete)
 
 		err := app.ticketPGRepo.Delete(ctx, id, true)
 		if err != nil {
@@ -84,7 +84,7 @@ func (app *ticketsController) DeleteTicket(ctx context.Context, id uuid.UUID, ha
 		return nil, nil
 
 	default:
-		fmt.Printf("controllers DeleteTicket default: %+v %+v\n", id, hardDelete)
+		fmt.Printf("handlers DeleteTicket default: %+v %+v\n", id, hardDelete)
 
 		err := app.ticketPGRepo.Delete(ctx, id, false)
 		if err != nil {
