@@ -241,5 +241,5 @@ var TicketService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "ticket/proto/ticket/v1/ticket.proto",
+	Metadata: "proto/ticket/v1/ticket.proto",
 }

@@ -19,7 +19,7 @@ const changeTicketDeletedState = `
 	RETURNING id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted
 	`
 
-func (tpg *ticketPG) Delete(ctx context.Context, id uuid.UUID, hardDelete bool) error {
+func (tpg *ticketRepositoryPG) Delete(ctx context.Context, id uuid.UUID, hardDelete bool) error {
 	fmt.Printf("pg Delete: %+v %+v\n", id, hardDelete)
 
 	if hardDelete {

@@ -15,7 +15,7 @@ const (
 )
 
 func NewGRPCClientServiceConn(ctx context.Context, target string) (*grpc.ClientConn, error) {
-	opts := []grpc_retry.CallOption{
+	settings := []grpc_retry.CallOption{
 		grpc_retry.WithBackoff(grpc_retry.BackoffLinear(backoffLinear)),
 		grpc_retry.WithCodes(codes.NotFound, codes.Aborted),
 	}
@@ -24,7 +24,7 @@ func NewGRPCClientServiceConn(ctx context.Context, target string) (*grpc.ClientC
 		ctx,
 		target,
 		grpc.WithInsecure(),
-		grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(opts...)),
+		grpc.WithUnaryInterceptor(grpc_retry.UnaryClientInterceptor(settings...)),
 	)
 	if err != nil {
 		return nil, err

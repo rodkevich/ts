@@ -1,11 +1,16 @@
 package postgres
 
-import "github.com/jackc/pgx/v4/pgxpool"
+import (
+	"github.com/jackc/pgx/v4/pgxpool"
 
-type ticketPG struct {
+	"github.com/rodkevich/ts/ticket"
+)
+
+type ticketRepositoryPG struct {
 	db *pgxpool.Pool
 }
 
-func New(db *pgxpool.Pool) *ticketPG {
-	return &ticketPG{db: db}
+// New ...
+func New(db *pgxpool.Pool) ticket.TicketsRepositoryIFace {
+	return &ticketRepositoryPG{db: db}
 }

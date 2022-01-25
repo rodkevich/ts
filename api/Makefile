@@ -15,3 +15,6 @@ go-list:
 
 go-tickets-run-local:
 	go run cmd/api.go
+
+go-mod:
+	go mod tidy -compat=1.17

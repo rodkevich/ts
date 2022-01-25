@@ -4,3 +4,6 @@ gen-ticket:
 	--go-grpc_out=. \
 	--grpc-gateway_out=. \
 	./proto/ticket/v1/ticket.proto
+
+run:
+	go run cmd/ticket.go

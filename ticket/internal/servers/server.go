@@ -14,19 +14,19 @@ import (
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/reflection"
 
-	"github.com/go-chi/chi/v5"
 	grpc_recovery "github.com/grpc-ecosystem/go-grpc-middleware/recovery"
 	grpc_ctxtags "github.com/grpc-ecosystem/go-grpc-middleware/tags"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/go-playground/validator/v10"
 	"github.com/jackc/pgx/v4/pgxpool"
 
-	cfg "github.com/rodkevich/ts/ticket/config"
-	ticketGrpcControllers "github.com/rodkevich/ts/ticket/internal/controllers/ticket/grpc"
-	"github.com/rodkevich/ts/ticket/internal/handlers"
-	ticketPGRepo "github.com/rodkevich/ts/ticket/internal/repositories/ticket/postgres"
-	"github.com/rodkevich/ts/ticket/pkg/logger"
-	pb "github.com/rodkevich/ts/ticket/proto/ticket/v1"
+	ticketCFG "github.com/rodkevich/ts/ticket/config"
+	ticketControllers "github.com/rodkevich/ts/ticket/internal/controllers"
+	ticketGRPCHandlers "github.com/rodkevich/ts/ticket/internal/handlers/ticket/grpc"
+	ticketRepoPG "github.com/rodkevich/ts/ticket/internal/repositories/ticket/postgres"
+	ticketLogger "github.com/rodkevich/ts/ticket/pkg/logger"
+	ticketProto "github.com/rodkevich/ts/ticket/proto/ticket/v1"
 )
 
 const (
@@ -40,13 +40,13 @@ const (
 // Server ...
 type Server struct {
 	chi          *chi.Mux
-	logger       logger.Logger
-	cfg          *cfg.Config
+	logger       ticketLogger.Logger
+	cfg          *ticketCFG.Config
 	pgConnection *pgxpool.Pool
 }
 
 // NewServer ...
-func NewServer(logger logger.Logger, cfg *cfg.Config, pgxPool *pgxpool.Pool) *Server {
+func NewServer(logger ticketLogger.Logger, cfg *ticketCFG.Config, pgxPool *pgxpool.Pool) *Server {
 	return &Server{
 		logger:       logger,
 		cfg:          cfg,
@@ -75,7 +75,7 @@ func (s *Server) Run() error {
 	}
 	defer listener.Close()
 
-	serverGRPC := grpc.NewServer(grpc.KeepaliveParams(keepalive.ServerParameters{
+	srv := grpc.NewServer(grpc.KeepaliveParams(keepalive.ServerParameters{
 		MaxConnectionIdle: s.cfg.GRPCServer.MaxConnectionIdle * time.Minute,
 		Timeout:           s.cfg.GRPCServer.Timeout * time.Second,
 		MaxConnectionAge:  s.cfg.GRPCServer.MaxConnectionAge * time.Minute,
@@ -84,26 +84,26 @@ func (s *Server) Run() error {
 		grpc.ChainUnaryInterceptor(
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_recovery.UnaryServerInterceptor(),
-			// pls.logger,
+			// pls.ticketLogger,
 		),
 	)
 
 	// Tickets-service //
-	ticketDB := ticketPGRepo.New(s.pgConnection)
-	ticketHandlers := handlers.New(s.logger, ticketDB)
-	ticketService := ticketGrpcControllers.New(s.logger, ticketHandlers, validate)
-	pb.RegisterTicketServiceServer(serverGRPC, ticketService)
+	r := ticketRepoPG.New(s.pgConnection)
+	c := ticketControllers.New(s.logger, r)
+	h := ticketGRPCHandlers.New(s.logger, c, validate)
+	ticketProto.RegisterTicketServiceServer(srv, h)
 
 	go func() {
 		s.logger.Infof("GRPC Server is listening on port: %v", s.cfg.GRPCServer.Port)
-		err := serverGRPC.Serve(listener)
+		err := srv.Serve(listener)
 		if err != nil {
-			s.logger.Fatal("serverGRPC.Serve(listener) is not running")
+			s.logger.Fatal("srv.Serve(listener) is not running")
 		}
 	}()
 
 	if s.cfg.GRPCServer.Mode != "Production" {
-		reflection.Register(serverGRPC)
+		reflection.Register(srv)
 	}
 
 	// Http //
@@ -137,7 +137,7 @@ func (s *Server) Run() error {
 			log.Fatal(err)
 		}
 
-		serverGRPC.GracefulStop()
+		srv.GracefulStop()
 		serverStopCancel()
 
 		s.logger.Info("Server Exited Properly")

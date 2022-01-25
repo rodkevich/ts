@@ -8,7 +8,7 @@ import (
 	"github.com/rodkevich/ts/ticket/internal/models"
 )
 
-func (tpg *ticketPG) Update(ctx context.Context, arg models.UpdateTicketParams, id uuid.UUID) (*models.Ticket, error) {
+func (tpg *ticketRepositoryPG) Update(ctx context.Context, arg models.UpdateTicketParams, id uuid.UUID) (*models.Ticket, error) {
 	const updateTicket = `
 	UPDATE tickets
 	SET owner_id=$1, name_short=$2, name_ext=$3, description=$4, amount=$5, price=$6, currency=$7, priority=$8, published=$9, active=$10

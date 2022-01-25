@@ -4,7 +4,7 @@ package ticket.v1;
 
 import "google/protobuf/timestamp.proto";
 
-option go_package = "ticket/proto/ticket/v1";
+option go_package = "proto/ticket/v1";
 
 service TicketService {
     rpc CreateTicket(CreateTicketRequest) returns (CreateTicketResponse);
@@ -54,17 +54,18 @@ message GetTicketRequest {
 message ListTicketsRequest {
     string id = 1;
     bool reverse = 2;
-    bool extended = 3;
-    bool search = 4;
-    bool paging = 5;
-    uint32 page_size = 6;
-    string page_token = 7;
-    repeated string fields = 8;
+    bool search = 3;
+    bool paging = 4;
+    uint32 page_size = 5;
+    string page_token = 6;
+    repeated string fields = 7;
 }
 
 message ListTicketsResponse {
-    repeated Ticket tickets = 1;
-    string next_page_token = 2;
+    uint64 total_count = 1;
+    bool has_more = 2;
+    repeated Ticket tickets = 3;
+    string next_page_token = 4;
 }
 
 message UpdateTicketRequest {

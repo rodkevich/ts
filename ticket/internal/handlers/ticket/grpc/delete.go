@@ -1,5 +1,5 @@
 /*
- * Copyright 404 1/21/2022.
+ * Copyright 404 1/24/2022.
  *
  *
  */
@@ -16,7 +16,7 @@ import (
 )
 
 func (app ticketGrpcService) DeleteTicket(ctx context.Context, req *v1.DeleteTicketRequest) (*v1.DeleteTicketResponse, error) {
-	fmt.Printf("controllers DeleteTicket: %+v\n", req)
+	fmt.Printf("handlers DeleteTicket: %+v\n", req)
 
 	id := uuid.MustParse(req.GetId())
 	isHardDelete := req.GetHard()

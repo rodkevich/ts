@@ -1,5 +1,5 @@
 /*
- * Copyright 404 1/21/2022.
+ * Copyright 404 1/24/2022.
  *
  *
  */
@@ -16,7 +16,7 @@ import (
 )
 
 func (app ticketGrpcService) GetTicket(ctx context.Context, r *v1.GetTicketRequest) (*v1.ListTicketsResponse, error) {
-	fmt.Printf("controllers GetTicket: %+v\n", r)
+	fmt.Printf("handlers GetTicket: %+v\n", r)
 
 	getTicket, err := app.ticketUsage.GetTicket(ctx, uuid.MustParse(r.GetId()))
 	if err != nil {

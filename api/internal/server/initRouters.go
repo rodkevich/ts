@@ -1,13 +1,17 @@
 package server
 
 import (
+	"bufio"
+	"context"
 	"encoding/json"
-	"log"
+	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
+	"google.golang.org/grpc"
 
 	"github.com/rodkevich/ts/api/internal/util"
 	"github.com/rodkevich/ts/api/pkg/filter"
@@ -52,27 +56,44 @@ func (s *Server) initHTTPTicketRouter() chi.Router {
 		r.Use(middleware.Recoverer)
 		r.Use(render.SetContentType(render.ContentTypeJSON))
 
-		r.Get("/{id}", func(w http.ResponseWriter, r *http.Request) {
+		r.Get("/{ticketID}", func(w http.ResponseWriter, r *http.Request) {
+			var (
+				opts   []grpc.CallOption
+				ti     = v1.NewTicketServiceClient(grpcClient)
+				ctx    = context.Background()
+				ticket *v1.ListTicketsResponse
+			)
 
-			w.Write([]byte("ticket router"))
+			if ticketID := chi.URLParam(r, "ticketID"); ticketID != "" {
+				tr := &v1.GetTicketRequest{
+					Id: ticketID,
+				}
+
+				getResp, err := ti.GetTicket(ctx, tr, opts...)
+				ticket = getResp
+				if err != nil {
+					s.logger.Error(err.Error())
+				}
+			}
+			render.JSON(w, r, ticket)
+
+			// resp, _ := json.Marshal(&ticket)
+			// w.Write(resp)
 		})
 
 		r.Get("/list", func(w http.ResponseWriter, r *http.Request) {
-			f := filter.NewFromURL(r.URL.Query())
-			log.Println(r.URL.Query())
+			baseFilter := filter.NewFromURL(r.URL.Query())
 			id := r.URL.Query().Get("id")
-			size := uint32(f.Size)
-			fields, _ := util.FieldsFromURL(r.URL.Query(), "ticket")
+			ticketFields, _ := util.FieldsFromURL(r.URL.Query(), "ticket")
 
 			req := v1.ListTicketsRequest{
 				Id:        id,
-				Reverse:   false,
-				Extended:  f.Extended,
-				Search:    f.Search,
-				Paging:    f.Paging,
-				PageSize:  size,
+				Reverse:   baseFilter.Reversed,
+				Search:    baseFilter.Search,
+				Paging:    baseFilter.Paging,
+				PageSize:  uint32(baseFilter.Size),
 				PageToken: "",
-				Fields:    fields,
+				Fields:    ticketFields,
 				// Fields: FieldsFromURL(r),
 			}
 
@@ -90,7 +111,16 @@ func (s *Server) initHTTPTicketRouter() chi.Router {
 			if err != nil {
 				s.logger.Errorf("api-service: /ticket : Unable to parse request: %v", err)
 			}
-
+			defer func(Body io.ReadCloser) {
+				err := Body.Close()
+				if err != nil {
+					s.logger.Errorf("api-service: io.ReadCloser: /ticket : Unable to parse request: %v", err)
+				}
+			}(r.Body)
+			buf := bufio.NewScanner(r.Body)
+			for buf.Scan() {
+				fmt.Println(buf.Text())
+			}
 			w.Write([]byte("form parsed"))
 		})
 	})

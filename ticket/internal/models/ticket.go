@@ -42,6 +42,7 @@ type (
 	}
 
 	TicketsList struct {
+		Cursor     string
 		TotalCount int
 		HasMore    bool
 		Tickets    []*Ticket `json:"tickets"`

@@ -1,3 +1,9 @@
+/*
+ * Copyright 404 1/24/2022.
+ *
+ *
+ */
+
 package grpc
 
 import (
@@ -13,19 +19,20 @@ type ticketGrpcService struct {
 	v1.UnimplementedTicketServiceServer
 
 	log         logger.Logger
-	ticketUsage ticket.TicketsUsage
-	tagUsage    ticket.TagsUsage
+	ticketUsage ticket.TicketsController
+	tagUsage    ticket.TagsController
 	validate    *validator.Validate
 	// ticketTagUsage ticket.TicketTagsController
 
 }
 
-// New ...
-func New(logger logger.Logger, useSchema ticket.TicketsUsage, validator *validator.Validate) *ticketGrpcService {
+// New Grpc service for ticket
+func New(logger logger.Logger, useSchema ticket.TicketsController, validator *validator.Validate) v1.TicketServiceServer {
 
 	return &ticketGrpcService{
 		log:         logger,
 		ticketUsage: useSchema,
 		validate:    validator,
 	}
+
 }

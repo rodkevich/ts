@@ -9,17 +9,17 @@ import (
 
 const createTicket = `
 	INSERT INTO tickets
-	(owner_id, name_short, name_ext, description, amount, 
+	(owner_id, name_short, name_ext, description, amount,
 	price, currency, priority, published)
 	VALUES
 	($1, $2, $3, $4, $5, $6, $7, $8, $9)
 	RETURNING
-	id, owner_id, name_short, name_ext, description, 
-	amount, price, currency, priority, published, 
+	id, owner_id, name_short, name_ext, description,
+	amount, price, currency, priority, published,
 	active, created_at, updated_at, deleted
 	`
 
-func (tpg *ticketPG) Create(ctx context.Context, arg *models.Ticket) (*models.Ticket, error) {
+func (tpg *ticketRepositoryPG) Create(ctx context.Context, arg *models.Ticket) (*models.Ticket, error) {
 	fmt.Printf("pg Ticket Create: %+v\n", arg)
 
 	row := tpg.db.QueryRow(

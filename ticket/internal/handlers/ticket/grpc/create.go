@@ -1,5 +1,5 @@
 /*
- * Copyright 404 1/21/2022.
+ * Copyright 404 1/24/2022.
  *
  *
  */
@@ -20,7 +20,7 @@ import (
 
 // CreateTicket entity with grpc request
 func (app ticketGrpcService) CreateTicket(ctx context.Context, request *v1.CreateTicketRequest) (*v1.CreateTicketResponse, error) {
-	fmt.Printf("controllers CreateTicket: %+v\n", request)
+	fmt.Printf("handlers CreateTicket: %+v\n", request)
 	parse, err := uuid.Parse(request.GetOwnerId())
 	if err != nil {
 		return nil, err

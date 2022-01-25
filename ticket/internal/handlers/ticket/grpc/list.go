@@ -1,3 +1,9 @@
+/*
+ * Copyright 404 1/24/2022.
+ *
+ *
+ */
+
 package grpc
 
 import (
@@ -19,20 +25,20 @@ func (app ticketGrpcService) ListTickets(ctx context.Context, request *v1.ListTi
 		4. проверить на ошибки
 		5. забиндить ответ в грписи
 	*/
-	fmt.Printf("controllers ListTickets: %+v\n", request)
+	fmt.Printf("handlers ListTickets: %+v\n", request)
 
-	filters := models.FilterFromRequest(request)
+	filter := models.FilterFromRequest(request)
 
-	getTickets, err := app.ticketUsage.ListTickets(ctx, &filters)
+	rtn, err := app.ticketUsage.ListTickets(ctx, &filter)
 	if err != nil {
 		app.log.Errorf("ticketUsage.List: %v", err)
 		return nil, err
 	}
 
 	return &v1.ListTicketsResponse{
-		TotalCount:    uint64(getTickets.TotalCount),
-		HasMore:       getTickets.HasMore,
-		NextPageToken: "",
-		Tickets:       getTickets.ToProto(),
+		TotalCount:    uint64(rtn.TotalCount),
+		HasMore:       rtn.HasMore,
+		Tickets:       rtn.ToProto(),
+		NextPageToken: rtn.Cursor,
 	}, nil
 }

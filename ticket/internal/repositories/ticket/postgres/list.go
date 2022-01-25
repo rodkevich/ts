@@ -3,12 +3,15 @@ package postgres
 import (
 	"context"
 	"fmt"
+	"log"
+	"time"
 
 	"github.com/Masterminds/squirrel"
 	"github.com/google/uuid"
 	"github.com/pkg/errors"
 
 	"github.com/rodkevich/ts/ticket/internal/models"
+	"github.com/rodkevich/ts/ticket/pkg/filter"
 )
 
 const (
@@ -26,8 +29,8 @@ const (
 		`
 )
 
-func (tpg *ticketPG) List(ctx context.Context, id *uuid.UUID, filter *models.TicketFilter) (*models.TicketsList, *uuid.UUID, error) {
-	fmt.Printf("pg List request: %+v %+v\n", id, filter)
+func (tpg *ticketRepositoryPG) List(ctx context.Context, ticketFilter models.TicketFilter) (*models.TicketsList, *uuid.UUID, error) {
+	fmt.Printf("pg List request: %+v\n", ticketFilter)
 
 	var totalCounter int
 	if err := tpg.db.QueryRow(ctx, countTickets).Scan(&totalCounter); err != nil {
@@ -49,31 +52,37 @@ func (tpg *ticketPG) List(ctx context.Context, id *uuid.UUID, filter *models.Tic
 		Where("tickets.deleted = 'false'").
 		OrderBy(orderList...)
 
-	if filter != nil {
-		if filter.Base.Size > 0 {
-			queryBuilder = queryBuilder.Limit(filter.Base.Size)
-		}
+	if ticketFilter.Base.Size > 0 {
+		queryBuilder = queryBuilder.Limit(ticketFilter.Base.Size)
 	}
 
-	// if id != nil {
-	// 	queryBuilder = queryBuilder.Where(squirrel.GtOrEq{"created_at": "2021-12-27 19:01:05.631728"})
-	// 	// queryBuilder = queryBuilder.Where(squirrel.Lt{"id": id})
-	// }
+	if ticketFilter.LastTicketTimestamp != "" {
+		println(ticketFilter.LastTicketTimestamp)
+		queryBuilder = queryBuilder.Where(squirrel.LtOrEq{"created_at": ticketFilter.LastTicketTimestamp})
+	}
+
+	if ticketFilter.LastTicketID != "" {
+		queryBuilder = queryBuilder.Where(squirrel.Lt{"id": ticketFilter.LastTicketID})
+	}
+
+	// queryBuilder = queryBuilder.Where(sq.LtOrEq{ "created_time": createdCursor })
+	// queryBuilder = queryBuilder.Where(sq.Lt{ "id": paymentID })
 
 	listTickets, args, err := queryBuilder.ToSql()
 	if err != nil {
-
-		return nil, nil, err
+		return nil, nil, errors.Wrap(err, "db.queryBuilder.ToSql")
 	}
 
 	rows, err := tpg.db.Query(ctx, listTickets, args...)
 	if err != nil {
-
-		return nil, nil, err
+		return nil, nil, errors.Wrap(err, "db.Query.rows")
 	}
+
 	defer rows.Close()
 
+	var createdTime time.Time
 	rtn := make([]*models.Ticket, 0)
+
 	for rows.Next() {
 		var each models.Ticket
 		if err := rows.Scan(
@@ -82,20 +91,27 @@ func (tpg *ticketPG) List(ctx context.Context, id *uuid.UUID, filter *models.Tic
 			&each.Priority, &each.Published, &each.Active, &each.CreatedAt,
 			&each.UpdatedAt, &each.Deleted,
 		); err != nil {
-
 			return nil, nil, err
 		}
+
+		createdTime = each.CreatedAt
 		rtn = append(rtn, &each)
 	}
-	if err := rows.Err(); err != nil {
 
+	if err := rows.Err(); err != nil {
 		return nil, nil, err
 	}
 
 	if len(rtn) > 0 {
+
+		cur := filter.EncodeCursor(createdTime, rtn[len(rtn)-1].ID.String())
 		lastID := rtn[len(rtn)-1].ID
+		log.Println("-- ID --", lastID)
+		log.Println("-- cur --", cur)
+		log.Println("-- createdTime --", createdTime)
 
 		return &models.TicketsList{
+			Cursor:     cur,
 			TotalCount: totalCounter,
 			HasMore:    false,
 			Tickets:    rtn,

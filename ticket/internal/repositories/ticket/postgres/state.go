@@ -8,7 +8,7 @@ import (
 	"github.com/rodkevich/ts/ticket/internal/models"
 )
 
-func (tpg *ticketPG) ChangePublishState(ctx context.Context, published bool, id uuid.UUID) (*models.Ticket, error) {
+func (tpg *ticketRepositoryPG) ChangePublishState(ctx context.Context, published bool, id uuid.UUID) (*models.Ticket, error) {
 	const changeTicketPublishState = `
 	UPDATE tickets
 	SET published=$1

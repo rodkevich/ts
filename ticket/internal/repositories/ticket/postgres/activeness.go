@@ -16,7 +16,7 @@ const changeTicketActivenessState = `
 	id, owner_id, name_short, name_ext, description, amount, price, currency, priority, published, active, created_at, updated_at, deleted
 	`
 
-func (tpg *ticketPG) ChangeActivenessState(ctx context.Context, active bool, id uuid.UUID) (*models.Ticket, error) {
+func (tpg *ticketRepositoryPG) ChangeActivenessState(ctx context.Context, active bool, id uuid.UUID) (*models.Ticket, error) {
 
 	row := tpg.db.QueryRow(
 		ctx, changeTicketActivenessState, active, id,

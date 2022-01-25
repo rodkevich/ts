@@ -15,6 +15,10 @@ type Config struct {
 	Redis      RedisConfig
 }
 
+type Grpc struct {
+	TicketServicePort string
+}
+
 type HttpServer struct {
 	Port              string
 	PprofPort         string

@@ -15,6 +15,9 @@ GRPCServer:
   CSRFPrefix: "csrf"
   SessionGrpcServicePort: ":5000"
 
+GRPC:
+  TicketServicePort: ":5001"
+
 HttpServer:
   Port: ":8000"
   PprofPort: ":8001"

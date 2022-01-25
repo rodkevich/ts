@@ -33,9 +33,7 @@ func FieldsFromURL(values url.Values, name string) ([]string, error) {
 	if ok {
 		substrings := strings.Split(raw[0], ",")
 		var rtn []string
-		for _, each := range substrings {
-			rtn = append(rtn, each)
-		}
+		rtn = append(rtn, substrings...)
 
 		return rtn, nil
 	}

@@ -1,12 +1,16 @@
 -- v0.1.0
+BEGIN;
 
 DROP TABLE if exists tickets CASCADE;
 DROP TABLE if exists tags CASCADE;
 DROP TABLE if exists ticket_tags CASCADE;
+drop INDEX if exists idx_tickets_pagination;
+drop TYPE if exists enum_tickets_priority;
 
 -- EXTENSIONS ------------------------------------------------------------------
 CREATE EXTENSION if not exists "pgcrypto";
 CREATE EXTENSION if not exists CITEXT;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 --- COMMON FUNCTIONS -----------------------------------------------------------
 
@@ -45,28 +49,33 @@ $$ language 'plpgsql';
 CREATE TYPE enum_tickets_priority AS ENUM
     ('Draft','Regular','Premium', 'Promoted');
 
-CREATE table if not exists tickets
+CREATE table if not exists public.tickets
 (
-    id          uuid                  not null default gen_random_uuid(),
+    id          uuid                  not null default (uuid_generate_v4()),
     owner_id    uuid                  not null,
     name_short  citext                not null CHECK ( name_short <> '' ),
     name_ext    citext,
     description text,
-    amount      integer               not null default 1::integer,
+    amount      integer               not null CHECK ( amount > 0 ),
     price       decimal(10, 2)        not null,
     currency    integer               not null,
     priority    enum_tickets_priority not null default 'Draft'::enum_tickets_priority,
     published   bool                  not null default false,
     active      bool                  not null default true,
-    created_at  timestamptz           not null default (now() AT TIME ZONE 'utc'),
-    updated_at  timestamptz           not null default (now() AT TIME ZONE 'utc'),
+    created_at  timestamp             not null default (now() AT TIME ZONE 'utc'),
+    updated_at  timestamp             not null default (now() AT TIME ZONE 'utc'),
     deleted     bool                  not null default false,
     PRIMARY KEY (id)
+--     PRIMARY KEY (created_at, id)
+
 );
+
+CREATE INDEX idx_tickets_pagination ON public.tickets (created_at, id);
+
 
 CREATE trigger tickets_touch_updated_at_trigger
     before update
-    on tickets
+    on public.tickets
     FOR EACH ROW
 EXECUTE procedure touch_updated_at();
 
@@ -95,8 +104,8 @@ CREATE table if not exists ticket_tags
 (
     ticket_id  uuid        not null,
     tag_id     uuid        not null,
-    created_at timestamptz not null default now(),
-    updated_at timestamptz not null default now(),
+    created_at timestamptz not null default (now() AT TIME ZONE 'utc'),
+    updated_at timestamptz not null default (now() AT TIME ZONE 'utc'),
 
     PRIMARY KEY (tag_id, ticket_id),
 
@@ -111,6 +120,7 @@ CREATE table if not exists ticket_tags
             ON DELETE CASCADE
 );
 
+
 CREATE trigger ticket_tags_touch_updated_at
     before update
     on ticket_tags
@@ -118,3 +128,33 @@ CREATE trigger ticket_tags_touch_updated_at
 EXECUTE procedure touch_updated_at();
 
 --------------------------------------------------------------------------------
+COMMIT;
+--
+-- CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+--
+-- DROP TABLE IF EXISTS "payment_with_uuid";
+--
+-- CREATE TABLE "payment_with_uuid"
+-- (
+--     id           VARCHAR(255) PRIMARY KEY NOT NULL DEFAULT (uuid_generate_v4()),
+--     amount       integer                  NULL,
+--     name         varchar(255)                      default NULL,
+--     created_time TIMESTAMP                NOT NULL DEFAULT (now() AT TIME ZONE 'utc')
+-- );
+--
+-- DROP INDEX IF EXISTS idx_payment_pagination;
+--
+-- CREATE INDEX idx_payment_pagination ON payment_with_uuid (created_time, id);
+--
+-- INSERT INTO payment_with_uuid (amount, "name")
+-- VALUES (531943, 'Claire')
+--      , (608692, 'Hilary')
+--      , (738645, 'Yvette')
+--      , (218669, 'Walter')
+--      , (864375, 'Robert')
+--      , (561453, 'Constance')
+--      , (429971, 'Camilla')
+--      , (924081, 'Rhiannon')
+--      , (718331, 'Holmes')
+--      , (452430, 'Imani')
+-- ;

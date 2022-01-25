@@ -45,6 +45,8 @@ linters-settings:
 output:
   format: tab
 
+sort-results: true
+
 issues:
   # Not using default exclusions because we want to require comments on public
   # functions and tickets.
@@ -56,9 +58,3 @@ issues:
     - func name will be used as test\.Test.* by other packages, and that stutters; consider calling this
     # govet: Common false positives
     - (possible misuse of unsafe.Pointer|should have signature)
-
-openapogenindocker:
-  docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
-  -i /local/checkout.yaml \
-  -g go \
-  -o /local/out/go

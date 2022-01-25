@@ -11,8 +11,10 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/jackc/pgx/v4/pgxpool"
+	"google.golang.org/grpc"
 
 	"github.com/rodkevich/ts/api/config"
+	"github.com/rodkevich/ts/api/pkg/grpc_client"
 	"github.com/rodkevich/ts/api/pkg/logger"
 )
 
@@ -34,7 +36,18 @@ func NewServer(logger logger.Logger, cfg *config.Config, pgxPool *pgxpool.Pool) 
 	}
 }
 
+var grpcClient *grpc.ClientConn
+
+// Run start a new server
 func (s *Server) Run() error {
+
+	ctx, _ := context.WithTimeout(context.Background(), 2*time.Second)
+	conn, err := grpc_client.NewGRPCClientServiceConn(ctx, "0.0.0.0:5001")
+	if err != nil {
+		return err
+	}
+
+	grpcClient = conn
 
 	// Http //
 	s.initHTTPPingRouter()
@@ -74,7 +87,7 @@ func (s *Server) Run() error {
 	}()
 	// Run http server
 	s.logger.Infof("HTTP Server is listening on port: %v", s.cfg.HttpServer.Port)
-	err := serverHTTP.ListenAndServe()
+	err = serverHTTP.ListenAndServe()
 	if err != nil && err != http.ErrServerClosed {
 		log.Fatal(err)
 	}

@@ -1,5 +1,5 @@
 /*
- * Copyright 404 1/21/2022.
+ * Copyright 404 1/24/2022.
  *
  *
  */
@@ -14,6 +14,6 @@ import (
 )
 
 func (app ticketGrpcService) UpdateTicket(ctx context.Context, request *v1.UpdateTicketRequest) (*v1.ListTicketsResponse, error) {
-	fmt.Printf("controllers UpdateTicket: %+v\n", request)
+	fmt.Printf("handlers UpdateTicket: %+v\n", request)
 	panic("implement me")
 }

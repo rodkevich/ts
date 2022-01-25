@@ -63,13 +63,22 @@ gen-ticket:
 
 linter:
 	echo "Starting linters"
-	cd ticket && golangci-lint run ./...
+	cd photo && echo $$PWD && golangci-lint run ./...
 	cd ..
-	cd customer && golangci-lint run ./...
+	cd api && echo $$PWD && golangci-lint run ./...
 	cd ..
-	cd photo && golangci-lint run ./...
+	cd ticket && echo $$PWD && golangci-lint run ./...
 	cd ..
-	cd profile && golangci-lint run ./...
+
+	cd profile && echo $$PWD && golangci-lint run ./...
+	cd ..
+	cd customer && echo $$PWD && golangci-lint run ./...
+
+openapogenindocker:
+	  docker run --rm -v "${PWD}:/local" openapitools/openapi-generator-cli generate \
+	  -i /local/checkout.yaml \
+	  -g go \
+	  -o /local/out/go
 
 upgrade:
 	# go get $(go list -f '{{if not (or .Main .Indirect)}}{{.Path}}{{end}}' -m all)
@@ -106,3 +115,13 @@ lint:
 	@ go get -u github.com/golang/lint/golint
 	$(foreach file,$(SRCS),fgt golint -min_confidence 0.9 $(file) || exit;)
 
+# usage .env file to set vars
+env-file:
+	set -a; source .env; set +a
+	set -a; . ./.env; set +a
+
+#//go:generate protoc --go_out=plugins=server:. -I.. ../customer.proto
+
+# change panic to log
+go-fmt:
+	gofmt -w -l -r "panic(err) -> log.Error(err)" .
