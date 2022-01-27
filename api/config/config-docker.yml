@@ -34,6 +34,17 @@ logger:
   Encoding: json
   Level: info
 
+redis:
+  RedisAddr: localhost:6379
+  RedisPassword:
+  RedisDb: 0
+  RedisDefaultDB: 0
+  MinIdleConn: 200
+  PoolSize: 12000
+  PoolTimeout: 240
+  Password: ""
+  DB: 0
+
 postgres:
   PostgresqlHost: postgres-ticket
   PostgresqlPort: 5556

@@ -10,10 +10,12 @@ import (
 	"time"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-redis/redis/v8"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"google.golang.org/grpc"
 
 	"github.com/rodkevich/ts/api/config"
+	"github.com/rodkevich/ts/api/internal/ticket/repository"
 	"github.com/rodkevich/ts/api/pkg/grpc_client"
 	"github.com/rodkevich/ts/api/pkg/logger"
 )
@@ -24,14 +26,17 @@ type Server struct {
 	logger       logger.Logger
 	cfg          *config.Config
 	pgConnection *pgxpool.Pool
+	redisConn    *redis.Client
+	ticketRepo   repository.TicketRedisRepo
 }
 
 // NewServer ...
-func NewServer(logger logger.Logger, cfg *config.Config, pgxPool *pgxpool.Pool) *Server {
+func NewServer(logger logger.Logger, cfg *config.Config, redisConn *redis.Client, pgxPool *pgxpool.Pool) *Server {
 	return &Server{
 		logger:       logger,
 		cfg:          cfg,
 		pgConnection: pgxPool,
+		redisConn:    redisConn,
 		router:       chi.NewMux(),
 	}
 }
@@ -48,6 +53,9 @@ func (s *Server) Run() error {
 	}
 
 	grpcClient = conn
+
+	r := repository.NewTicketRedisRepo(s.redisConn)
+	s.ticketRepo = r
 
 	// Http //
 	s.initHTTPPingRouter()

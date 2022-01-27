@@ -11,8 +11,11 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/render"
+	"github.com/go-redis/redis/v8"
+	"github.com/google/uuid"
 	"google.golang.org/grpc"
 
+	"github.com/rodkevich/ts/api/internal/models"
 	"github.com/rodkevich/ts/api/internal/util"
 	"github.com/rodkevich/ts/api/pkg/filter"
 	v1 "github.com/rodkevich/ts/api/proto/ticket/v1"
@@ -39,7 +42,6 @@ func (s *Server) initHTTPPingRouter() chi.Router {
 			// if err != nil {
 			// 	s.logger.Errorf("api-service: /config : Unable to parse config: %v", err)
 			// }
-
 			render.JSON(w, r, s.cfg)
 		})
 	})
@@ -65,6 +67,22 @@ func (s *Server) initHTTPTicketRouter() chi.Router {
 			)
 
 			if ticketID := chi.URLParam(r, "ticketID"); ticketID != "" {
+
+				cacheTicket, err := s.ticketRepo.GetTicketByID(ctx, uuid.MustParse(ticketID))
+
+				if err != nil {
+					if err != redis.Nil {
+						s.logger.Errorf("GetTicketByID: %v", err)
+					}
+				}
+
+				if cacheTicket != nil {
+					s.logger.Info("if cacheTicket != nil:", cacheTicket)
+					render.JSON(w, r, cacheTicket)
+					return
+				}
+				s.logger.Info("if cacheTicket == nil:", cacheTicket)
+
 				tr := &v1.GetTicketRequest{
 					Id: ticketID,
 				}
@@ -74,11 +92,12 @@ func (s *Server) initHTTPTicketRouter() chi.Router {
 				if err != nil {
 					s.logger.Error(err.Error())
 				}
+				if err := s.ticketRepo.SetTicket(ctx, models.FromProto(ticket.Tickets[0])); err != nil {
+					s.logger.Errorf("SetTicket: %v", err)
+				}
 			}
-			render.JSON(w, r, ticket)
 
-			// resp, _ := json.Marshal(&ticket)
-			// w.Write(resp)
+			render.JSON(w, r, ticket)
 		})
 
 		r.Get("/list", func(w http.ResponseWriter, r *http.Request) {

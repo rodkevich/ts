@@ -7,6 +7,7 @@ import (
 	"github.com/rodkevich/ts/api/config"
 	"github.com/rodkevich/ts/api/internal/server"
 	"github.com/rodkevich/ts/api/pkg/logger"
+	"github.com/rodkevich/ts/api/pkg/redis"
 	// "github.com/rodkevich/ts/api/pkg/postgres"
 )
 
@@ -39,8 +40,9 @@ func main() {
 	//
 	// log.Infof("%-v", pgxConn.Config().ConnString())
 
+	redisClient := redis.NewRedisClient(cfg)
+	log.Infof("Redis connected: %-v", redisClient.PoolStats())
 	// server
-	// s := server.NewServer(log, cfg, pgxConn)
-	s := server.NewServer(log, cfg, nil)
+	s := server.NewServer(log, cfg, redisClient, nil)
 	log.Fatal(" server stopped running: ERRORS: ", s.Run())
 }
