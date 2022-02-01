@@ -11,6 +11,7 @@ import (
 )
 
 type (
+	// Ticket ...
 	Ticket struct {
 		ID          uuid.UUID
 		OwnerID     uuid.UUID
@@ -28,6 +29,7 @@ type (
 		Deleted     bool
 	}
 
+	// UpdateTicketParams ...
 	UpdateTicketParams struct {
 		OwnerID     uuid.UUID
 		NameShort   string
@@ -41,6 +43,7 @@ type (
 		Published   bool
 	}
 
+	// TicketsList ...
 	TicketsList struct {
 		Cursor     string
 		TotalCount int

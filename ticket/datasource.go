@@ -15,7 +15,7 @@ import (
 type TicketsRepositoryIFace interface {
 	Create(ctx context.Context, arg *models.Ticket) (*models.Ticket, error)
 	Get(ctx context.Context, id uuid.UUID) (*models.Ticket, error)
-	List(ctx context.Context, f models.TicketFilter) (*models.TicketsList, *uuid.UUID, error)
+	List(ctx context.Context, tf models.TicketFilter) (*models.TicketsList, error)
 	Update(ctx context.Context, arg models.UpdateTicketParams, id uuid.UUID) (*models.Ticket, error)
 	Delete(ctx context.Context, id uuid.UUID, hardDelete bool) error
 	Search(ctx context.Context, id *uuid.UUID, f *models.TicketFilter) (*models.TicketsList, *uuid.UUID, error)

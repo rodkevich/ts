@@ -32,8 +32,9 @@ func (tpg *ticketRepositoryPG) Get(ctx context.Context, id uuid.UUID) (*models.T
 
 	cur := filter.EncodeCursor(rtn.CreatedAt, rtn.ID.String())
 	fmt.Println("\n GET EncodeCursor", cur)
-	t, u, _ := filter.DecodeCursor(cur)
-	fmt.Println("\n", "GET DecodeCursor: ")
-	fmt.Println("\n", t, u)
+
+	t, u, err := filter.DecodeCursor(cur)
+	fmt.Println("\n", t, u, err)
+
 	return &rtn, err
 }

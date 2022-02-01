@@ -22,7 +22,7 @@ import (
 	"github.com/jackc/pgx/v4/pgxpool"
 
 	ticketCFG "github.com/rodkevich/ts/ticket/config"
-	ticketControllers "github.com/rodkevich/ts/ticket/internal/controllers"
+	"github.com/rodkevich/ts/ticket/internal/controllers/ticket"
 	ticketGRPCHandlers "github.com/rodkevich/ts/ticket/internal/handlers/ticket/grpc"
 	ticketRepoPG "github.com/rodkevich/ts/ticket/internal/repositories/ticket/postgres"
 	ticketLogger "github.com/rodkevich/ts/ticket/pkg/logger"
@@ -90,7 +90,7 @@ func (s *Server) Run() error {
 
 	// Tickets-service //
 	r := ticketRepoPG.New(s.pgConnection)
-	c := ticketControllers.New(s.logger, r)
+	c := ticket.New(s.logger, r)
 	h := ticketGRPCHandlers.New(s.logger, c, validate)
 	ticketProto.RegisterTicketServiceServer(srv, h)
 

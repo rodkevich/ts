@@ -6,6 +6,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// TicketTag ...
 type TicketTag struct {
 	TicketID  uuid.UUID
 	TagID     uuid.UUID

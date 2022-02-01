@@ -20,15 +20,18 @@ type (
 		Deleted     bool
 	}
 
+	// TagList ...
 	TagList struct {
 		Tags []*Tag `json:"tags"`
 	}
 
+	// CreateTagParams ...
 	CreateTagParams struct {
 		Name        string
 		Description types.NullString
 	}
 
+	// UpdateTagParams ...
 	UpdateTagParams struct {
 		ID          uuid.UUID
 		Name        string
@@ -37,6 +40,7 @@ type (
 	}
 )
 
+// ToProto ...
 func (t *Tag) ToProto() *v1.Tag {
 	return &v1.Tag{
 		Id:          "",
@@ -48,6 +52,7 @@ func (t *Tag) ToProto() *v1.Tag {
 	}
 }
 
+// ToProto ...
 func (tl *TagList) ToProto() []*v1.Tag {
 	tagsList := make([]*v1.Tag, 0, len(tl.Tags))
 	for _, tag := range tl.Tags {

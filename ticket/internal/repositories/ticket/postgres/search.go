@@ -56,16 +56,12 @@ func (tpg *ticketRepositoryPG) Search(ctx context.Context, id *uuid.UUID, filter
 	).
 		From("tickets").
 		PlaceholderFormat(squirrel.Dollar).
-		OrderBy("updated_at DESC")
+		OrderBy("created_at DESC, id DESC")
 
 	if filter != nil {
 		if filter.Base.Size > 0 {
 			queryBuilder = queryBuilder.Limit(filter.Base.Size)
 		}
-	}
-
-	if id != nil {
-		queryBuilder = queryBuilder.Where(squirrel.Lt{"id": id})
 	}
 
 	listTickets, args, err := queryBuilder.ToSql()

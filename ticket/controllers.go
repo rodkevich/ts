@@ -10,10 +10,11 @@ import (
 
 // TicketsController ..
 type TicketsController interface {
-	CreateTicket(ctx context.Context, prototype *models.Ticket) (*models.Ticket, error)
+	CreateTicket(ctx context.Context, t *models.Ticket) (*models.Ticket, error)
 	GetTicket(ctx context.Context, id uuid.UUID) (*models.Ticket, error)
-	ListTickets(ctx context.Context, filter *models.TicketFilter) (*models.TicketsList, error)
-	UpdateTicket(ctx context.Context, target *models.Ticket) (*models.Ticket, error)
+	ListTickets(ctx context.Context, tf *models.TicketFilter) (*models.TicketsList, error)
+	SearchTickets(ctx context.Context, tf *models.TicketFilter) (*models.TicketsList, error)
+	UpdateTicket(ctx context.Context, t *models.Ticket) (*models.Ticket, error)
 	DeleteTicket(ctx context.Context, id uuid.UUID, hardDelete bool) (*models.Ticket, error)
 }
 

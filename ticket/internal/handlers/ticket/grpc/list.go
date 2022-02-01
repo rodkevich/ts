@@ -27,9 +27,13 @@ func (app ticketGrpcService) ListTickets(ctx context.Context, request *v1.ListTi
 	*/
 	fmt.Printf("handlers ListTickets: %+v\n", request)
 
-	filter := models.FilterFromRequest(request)
+	filter, err := models.FilterFromRequest(request)
+	if err != nil {
+		app.log.Errorf("ticketUsage.List: %v", err)
+		return nil, err
+	}
 
-	rtn, err := app.ticketUsage.ListTickets(ctx, &filter)
+	rtn, err := app.ticketUsage.ListTickets(ctx, filter)
 	if err != nil {
 		app.log.Errorf("ticketUsage.List: %v", err)
 		return nil, err

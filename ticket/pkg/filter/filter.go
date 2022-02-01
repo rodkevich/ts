@@ -16,7 +16,7 @@ const (
 	queryParamPage                  = "page"
 	queryParamSize                  = "size"
 	responseItemsDefaultPage        = 1
-	responseItemsDefaultSizePerPage = 3
+	responseItemsDefaultSizePerPage = 5
 )
 
 type Common struct {
@@ -71,8 +71,7 @@ func has(queries url.Values, param string) bool {
 	return queries.Get(param) != ""
 }
 
-// func DecodeCursor(encodedCursor string) (res time.Time, uuid string, err error) {
-func DecodeCursor(encodedCursor string) (res string, uuid string, err error) {
+func DecodeCursor(encodedCursor string) (res time.Time, uuid string, err error) {
 	byt, err := base64.StdEncoding.DecodeString(encodedCursor)
 	if err != nil {
 		return
@@ -80,21 +79,17 @@ func DecodeCursor(encodedCursor string) (res string, uuid string, err error) {
 
 	arrStr := strings.Split(string(byt), ",")
 
-	println("\n DecodeCursor -- : ", arrStr[0], arrStr[1])
-
 	if len(arrStr) != 2 {
 		err = errors.New("cursor is invalid")
 		return
 	}
 
-	// res, err = time.Parse(time.RFC3339Nano, arrStr[0])
-	// if err != nil {
-	// 	return
-	// }
-	// println("\n DecodeCursor -- : ", res.String())
-
-	res = arrStr[0]
+	res, err = time.Parse(time.RFC3339Nano, arrStr[0])
+	if err != nil {
+		return
+	}
 	uuid = arrStr[1]
+
 	return
 }
 
