@@ -7,41 +7,19 @@ import "google/protobuf/empty.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/type.proto";
 
-option go_package = "proto/sub/v1";
+option go_package = "sub/proto/sub/v1";
 
-message Tag {
-  string id = 1;
-  google.protobuf.Option options = 2;
-  google.protobuf.Timestamp created_at = 3;
-  google.protobuf.Timestamp updated_at = 4;
-  google.protobuf.Timestamp deleted_at = 5;
-  string name = 6;
-  string description = 7;
+message Subscriber {
+  string user_id = 1;
+  string topic_name = 2;
 }
 
-//service TagService {
-//  rpc CreateTag(CreateTagRequest) returns (CreateTagResponse);
-//  rpc ListTags(ListTagsRequest) returns (ListTagsResponse);
-//}
-//
-//message CreateTagRequest {
-//  string id = 1;
-//  string name = 2;
-//  string commit_name = 3;
-//}
-//
-//message CreateTagResponse {
-//  Tag tag = 1;
-//}
-//
-//message ListTagsRequest {
-//  string id = 1;
-//  uint32 page_size = 2;
-//  string page_token = 3;
-//  bool reverse = 4;
-//}
-//
-//message ListTagsResponse {
-//  repeated Tag tags = 1;
-//  string next_page_token = 2;
-//}
+service SubscriptionService {
+  rpc CreateSubscriber(CreateSubscriberRequest) returns (CreateSubscriberResponse);
+  rpc ListSubscribers(ListSubscribersRequest) returns (ListSubscribersResponse);
+}
+
+message CreateSubscriberRequest {};
+message CreateSubscriberResponse {};
+message ListSubscribersRequest {};
+message ListSubscribersResponse {};
