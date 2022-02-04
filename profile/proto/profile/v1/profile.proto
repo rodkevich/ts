@@ -51,12 +51,12 @@ message ListProfilesRequest {
   string id = 1;
 }
 
-message UpdateProfileRequest {
+message ListProfilesResponse {
   repeated Profile profiles = 1;
   string next_page_token = 2;
 }
 
-message ListProfilesResponse {
+message UpdateProfileRequest {
   Profile profile = 1;
 }
 
