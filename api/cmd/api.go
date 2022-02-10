@@ -14,6 +14,7 @@ import (
 func main() {
 	configPath := config.GetConfigPath(os.Getenv("CONFIG"))
 	cfg, err := config.GetConfig(configPath)
+
 	if err != nil {
 		sysLog.Fatalf("Loading config: %v", err)
 	}
@@ -40,8 +41,10 @@ func main() {
 	//
 	// log.Infof("%-v", pgxConn.Config().ConnString())
 
+	// using redis for cache
 	redisClient := redis.NewRedisClient(cfg)
 	log.Infof("Redis connected: %-v", redisClient.PoolStats())
+
 	// server
 	s := server.NewServer(log, cfg, redisClient, nil)
 	log.Fatal(" server stopped running: ERRORS: ", s.Run())
